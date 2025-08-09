@@ -1,0 +1,554 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		EDABF28C2E46F74C00B11677 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EDABF2722E46F74B00B11677 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EDABF2792E46F74B00B11677;
+			remoteInfo = "desktop-app-switcher";
+		};
+		EDABF2962E46F74C00B11677 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EDABF2722E46F74B00B11677 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EDABF2792E46F74B00B11677;
+			remoteInfo = "desktop-app-switcher";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		EDABF27A2E46F74B00B11677 /* desktop-app-switcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "desktop-app-switcher.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EDABF28B2E46F74C00B11677 /* desktop-app-switcherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "desktop-app-switcherTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EDABF2952E46F74C00B11677 /* desktop-app-switcherUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "desktop-app-switcherUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		EDABF27C2E46F74B00B11677 /* desktop-app-switcher */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "desktop-app-switcher";
+			sourceTree = "<group>";
+		};
+		EDABF28E2E46F74C00B11677 /* desktop-app-switcherTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "desktop-app-switcherTests";
+			sourceTree = "<group>";
+		};
+		EDABF2982E46F74C00B11677 /* desktop-app-switcherUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "desktop-app-switcherUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EDABF2772E46F74B00B11677 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EDABF2882E46F74C00B11677 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EDABF2922E46F74C00B11677 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		EDABF2712E46F74B00B11677 = {
+			isa = PBXGroup;
+			children = (
+				EDABF27C2E46F74B00B11677 /* desktop-app-switcher */,
+				EDABF28E2E46F74C00B11677 /* desktop-app-switcherTests */,
+				EDABF2982E46F74C00B11677 /* desktop-app-switcherUITests */,
+				EDABF27B2E46F74B00B11677 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EDABF27B2E46F74B00B11677 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EDABF27A2E46F74B00B11677 /* desktop-app-switcher.app */,
+				EDABF28B2E46F74C00B11677 /* desktop-app-switcherTests.xctest */,
+				EDABF2952E46F74C00B11677 /* desktop-app-switcherUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		EDABF2792E46F74B00B11677 /* desktop-app-switcher */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EDABF29F2E46F74C00B11677 /* Build configuration list for PBXNativeTarget "desktop-app-switcher" */;
+			buildPhases = (
+				EDABF2762E46F74B00B11677 /* Sources */,
+				EDABF2772E46F74B00B11677 /* Frameworks */,
+				EDABF2782E46F74B00B11677 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				EDABF27C2E46F74B00B11677 /* desktop-app-switcher */,
+			);
+			name = "desktop-app-switcher";
+			packageProductDependencies = (
+			);
+			productName = "desktop-app-switcher";
+			productReference = EDABF27A2E46F74B00B11677 /* desktop-app-switcher.app */;
+			productType = "com.apple.product-type.application";
+		};
+		EDABF28A2E46F74C00B11677 /* desktop-app-switcherTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EDABF2A22E46F74C00B11677 /* Build configuration list for PBXNativeTarget "desktop-app-switcherTests" */;
+			buildPhases = (
+				EDABF2872E46F74C00B11677 /* Sources */,
+				EDABF2882E46F74C00B11677 /* Frameworks */,
+				EDABF2892E46F74C00B11677 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EDABF28D2E46F74C00B11677 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				EDABF28E2E46F74C00B11677 /* desktop-app-switcherTests */,
+			);
+			name = "desktop-app-switcherTests";
+			packageProductDependencies = (
+			);
+			productName = "desktop-app-switcherTests";
+			productReference = EDABF28B2E46F74C00B11677 /* desktop-app-switcherTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		EDABF2942E46F74C00B11677 /* desktop-app-switcherUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EDABF2A52E46F74C00B11677 /* Build configuration list for PBXNativeTarget "desktop-app-switcherUITests" */;
+			buildPhases = (
+				EDABF2912E46F74C00B11677 /* Sources */,
+				EDABF2922E46F74C00B11677 /* Frameworks */,
+				EDABF2932E46F74C00B11677 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EDABF2972E46F74C00B11677 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				EDABF2982E46F74C00B11677 /* desktop-app-switcherUITests */,
+			);
+			name = "desktop-app-switcherUITests";
+			packageProductDependencies = (
+			);
+			productName = "desktop-app-switcherUITests";
+			productReference = EDABF2952E46F74C00B11677 /* desktop-app-switcherUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EDABF2722E46F74B00B11677 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					EDABF2792E46F74B00B11677 = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					EDABF28A2E46F74C00B11677 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = EDABF2792E46F74B00B11677;
+					};
+					EDABF2942E46F74C00B11677 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = EDABF2792E46F74B00B11677;
+					};
+				};
+			};
+			buildConfigurationList = EDABF2752E46F74B00B11677 /* Build configuration list for PBXProject "desktop-app-switcher" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = EDABF2712E46F74B00B11677;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = EDABF27B2E46F74B00B11677 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EDABF2792E46F74B00B11677 /* desktop-app-switcher */,
+				EDABF28A2E46F74C00B11677 /* desktop-app-switcherTests */,
+				EDABF2942E46F74C00B11677 /* desktop-app-switcherUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EDABF2782E46F74B00B11677 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EDABF2892E46F74C00B11677 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EDABF2932E46F74C00B11677 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		EDABF2762E46F74B00B11677 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EDABF2872E46F74C00B11677 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EDABF2912E46F74C00B11677 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EDABF28D2E46F74C00B11677 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EDABF2792E46F74B00B11677 /* desktop-app-switcher */;
+			targetProxy = EDABF28C2E46F74C00B11677 /* PBXContainerItemProxy */;
+		};
+		EDABF2972E46F74C00B11677 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EDABF2792E46F74B00B11677 /* desktop-app-switcher */;
+			targetProxy = EDABF2962E46F74C00B11677 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		EDABF29D2E46F74C00B11677 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		EDABF29E2E46F74C00B11677 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		EDABF2A02E46F74C00B11677 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "desktop-app-switcher/desktop_app_switcher.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"desktop-app-switcher/Preview Content\"";
+				DEVELOPMENT_TEAM = PZ2Y42556P;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "davejinyoung.desktop-app-switcher";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		EDABF2A12E46F74C00B11677 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "desktop-app-switcher/desktop_app_switcher.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"desktop-app-switcher/Preview Content\"";
+				DEVELOPMENT_TEAM = PZ2Y42556P;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "davejinyoung.desktop-app-switcher";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		EDABF2A32E46F74C00B11677 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PZ2Y42556P;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "davejinyoung.desktop-app-switcherTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/desktop-app-switcher.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/desktop-app-switcher";
+			};
+			name = Debug;
+		};
+		EDABF2A42E46F74C00B11677 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PZ2Y42556P;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "davejinyoung.desktop-app-switcherTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/desktop-app-switcher.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/desktop-app-switcher";
+			};
+			name = Release;
+		};
+		EDABF2A62E46F74C00B11677 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PZ2Y42556P;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "davejinyoung.desktop-app-switcherUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = "desktop-app-switcher";
+			};
+			name = Debug;
+		};
+		EDABF2A72E46F74C00B11677 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PZ2Y42556P;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "davejinyoung.desktop-app-switcherUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = "desktop-app-switcher";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		EDABF2752E46F74B00B11677 /* Build configuration list for PBXProject "desktop-app-switcher" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EDABF29D2E46F74C00B11677 /* Debug */,
+				EDABF29E2E46F74C00B11677 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EDABF29F2E46F74C00B11677 /* Build configuration list for PBXNativeTarget "desktop-app-switcher" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EDABF2A02E46F74C00B11677 /* Debug */,
+				EDABF2A12E46F74C00B11677 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EDABF2A22E46F74C00B11677 /* Build configuration list for PBXNativeTarget "desktop-app-switcherTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EDABF2A32E46F74C00B11677 /* Debug */,
+				EDABF2A42E46F74C00B11677 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EDABF2A52E46F74C00B11677 /* Build configuration list for PBXNativeTarget "desktop-app-switcherUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EDABF2A62E46F74C00B11677 /* Debug */,
+				EDABF2A72E46F74C00B11677 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = EDABF2722E46F74B00B11677 /* Project object */;
+}
