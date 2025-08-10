@@ -40,8 +40,8 @@ struct ContentView: View {
             }
         }
         .padding(25)
-        .background(.regularMaterial)
         .cornerRadius(8)
+        .frame(width: 700, height: 160)
     }
 }
 
