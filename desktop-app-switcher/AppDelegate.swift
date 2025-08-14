@@ -1,16 +1,12 @@
-//
-//  AppDelegate.swift
-//  desktop-app-switcher
-//
-//  Created by Dave Jung on 2025-08-09.
-//
-
 import SwiftUI
 import AppKit
+import HotKey
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     
     private var panel: NSPanel!
+    private let appState = AppState()
+    private var hotKey: HotKey?
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         panel = NSPanel(
@@ -23,10 +19,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         panel.level = .floating
         panel.collectionBehavior = .canJoinAllSpaces
         panel.backgroundColor = .clear
-        panel.contentViewController = NSHostingController(rootView: ContentView())
+        
+        let contentView = ContentView().environmentObject(appState)
+        panel.contentViewController = NSHostingController(rootView: contentView)
         panel.setContentSize(CGSize(width: 700, height: 160))
         
-        showPanel()
+        hotKey = HotKey(key: .tab, modifiers: [.option])
+        hotKey?.keyDownHandler = { [weak self] in
+            self?.togglePanel()
+        }
+    }
+
+    
+    @objc func togglePanel() {
+        if panel.isVisible {
+            panel.orderOut(nil)
+        } else {
+            appState.fetchRunningApps()
+            showPanel()
+        }
     }
     
     func showPanel() {
