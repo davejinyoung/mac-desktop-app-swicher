@@ -9,6 +9,7 @@ struct AppInfo: Identifiable, Equatable {
 
 class AppState: ObservableObject {
     @Published var runningApps: [AppInfo] = []
+    @Published var screenWidth: CGFloat = 0
 
     func fetchRunningApps() {
         let workspace = NSWorkspace.shared

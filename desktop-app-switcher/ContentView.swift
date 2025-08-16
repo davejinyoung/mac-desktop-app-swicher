@@ -1,14 +1,14 @@
-import SwiftUI
 import AppKit
 import HotKey
+import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
     @State private var selectedAppID: String?
     var hotKey = HotKey(key: .tab, modifiers: [.option, .command])
-    
+
     var body: some View {
-        HStack(){
+        HStack {
             ForEach(appState.runningApps) { app in
                 VStack(alignment: .center) {
                     Image(nsImage: app.icon)
@@ -16,7 +16,9 @@ struct ContentView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 90, height: 90)
                         .padding(8)
-                        .background(selectedAppID == app.id ? Color.black.opacity(0.25) : Color.clear)
+                        .background(
+                            selectedAppID == app.id ? Color.black.opacity(0.25) : Color.clear
+                        )
                         .cornerRadius(8)
                     Text(app.name)
                         .lineLimit(1)
@@ -27,8 +29,9 @@ struct ContentView: View {
             }
         }
         .padding(25)
-        .cornerRadius(8)
-        .frame(width: 700, height: 160)
+        .background(.regularMaterial)
+        .cornerRadius(20)
+        .frame(width: appState.screenWidth, height: 160)
         .onChange(of: appState.runningApps) {
             selectedAppID = appState.runningApps.first?.id
         }
@@ -37,4 +40,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environmentObject(AppState())
 }
