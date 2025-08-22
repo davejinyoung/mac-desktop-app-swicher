@@ -14,7 +14,7 @@ struct ContentView: View {
                     Image(nsImage: app.icon)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 90, height: 90)
+                        .frame(width: 120, height: 120)
                         .padding(8)
                         .background(
                             selectedAppID == app.id ? Color.black.opacity(0.25) : Color.clear
@@ -28,10 +28,10 @@ struct ContentView: View {
                 }
             }
         }
-        .padding(25)
-        .background(.regularMaterial)
+        .padding(20)
+        .background(.ultraThinMaterial)
         .cornerRadius(20)
-        .frame(width: appState.screenWidth, height: 160)
+        .frame(width: appState.screenWidth, height: appState.screenHeight)
         .onChange(of: appState.runningApps) {
             selectedAppID = appState.runningApps.first?.id
         }

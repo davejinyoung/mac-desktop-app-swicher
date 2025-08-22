@@ -22,6 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         panel.collectionBehavior = .canJoinAllSpaces
         if let screen = NSScreen.main {
             appState.screenWidth = screen.visibleFrame.width
+            appState.screenHeight = screen.visibleFrame.height
         }
 
         let contentView = ContentView().environmentObject(appState)
@@ -48,7 +49,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func showPanel() {
         if let screen = NSScreen.main {
             let screenRect = screen.visibleFrame
-            let newSize = CGSize(width: appState.screenWidth, height: 160)
+            let newSize = CGSize(width: appState.screenWidth, height: appState.screenHeight	)
             panel.setContentSize(newSize)
 
             let newOriginX = (screenRect.width - newSize.width) / 2 + screenRect.origin.x
