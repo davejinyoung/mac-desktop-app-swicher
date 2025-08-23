@@ -2,6 +2,24 @@ import AppKit
 import HotKey
 import SwiftUI
 
+struct VisualEffectView: NSViewRepresentable {
+    let material: NSVisualEffectView.Material
+    let blendingMode: NSVisualEffectView.BlendingMode
+
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.blendingMode = blendingMode
+        view.material = material
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
+        nsView.material = material
+    }
+}
+
+
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
     @State private var selectedAppID: String?
@@ -10,18 +28,21 @@ struct ContentView: View {
     var body: some View {
         HStack {
             ForEach(appState.runningApps) { app in
-                VStack(alignment: .center) {
+                ZStack(alignment: .bottom) {
                     Image(nsImage: app.icon)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 120, height: 120)
-                        .padding(8)
                         .background(
-                            selectedAppID == app.id ? Color.black.opacity(0.25) : Color.clear
+                            selectedAppID == app.id ? Color.black.opacity(0.5) : Color.clear
                         )
                         .cornerRadius(8)
+                        .padding(4)
+                    
                     Text(app.name)
                         .lineLimit(1)
+                        .foregroundColor(selectedAppID == app.id ? Color.white : Color.clear)
+                        .padding(.bottom, -15)
                 }
                 .onTapGesture {
                     selectedAppID = app.id
@@ -29,7 +50,7 @@ struct ContentView: View {
             }
         }
         .padding(20)
-        .background(.ultraThinMaterial)
+        .background(VisualEffectView(material: .hudWindow, blendingMode: .behindWindow))
         .cornerRadius(20)
         .frame(width: appState.screenWidth, height: appState.screenHeight)
         .onChange(of: appState.runningApps) {
