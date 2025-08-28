@@ -33,9 +33,22 @@
 		EDABF2952E46F74C00B11677 /* desktop-app-switcherUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "desktop-app-switcherUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		EDC5AABF2E5FCF370044E266 /* Exceptions for "desktop-app-switcher" folder in "desktop-app-switcher" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = EDABF2792E46F74B00B11677 /* desktop-app-switcher */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		EDABF27C2E46F74B00B11677 /* desktop-app-switcher */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				EDC5AABF2E5FCF370044E266 /* Exceptions for "desktop-app-switcher" folder in "desktop-app-switcher" target */,
+			);
 			path = "desktop-app-switcher";
 			sourceTree = "<group>";
 		};
@@ -410,6 +423,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "desktop-app-switcher/Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -438,6 +453,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "desktop-app-switcher/Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
