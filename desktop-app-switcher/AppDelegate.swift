@@ -7,9 +7,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var panel: NSPanel!
     private let appState = AppState()
 
-    private var flagsMonitor: Any?
-    private var localKeyMonitor: Any?
-    private var globalKeyMonitor: Any?
+    private var globalFlagsMonitor: Any?
+    private var localFlagsMonitor: Any?
+    private var eventTap: CFMachPort?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         if !checkAccessibilityPermissions() {
@@ -18,7 +18,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         setupPanel()
-        setupKeyListeners()
+        setupEventTap()
+        setupFlagsMonitor()
     }
     
     private func checkAccessibilityPermissions() -> Bool {
@@ -43,7 +44,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             let response = alert.runModal()
             if response == .alertFirstButtonReturn {
-                // Open System Preferences
                 NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
             }
             NSApplication.shared.terminate(self)
@@ -74,48 +74,98 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         panel.contentViewController = hostingController
     }
     
-    func setupKeyListeners() {
-        print("Setting up key listeners...")
+    private func setupEventTap() {
+        print("Setting up CGEventTap...")
         
-        // Global monitor for flags (can't consume, but that's okay for modifier keys)
-        flagsMonitor = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
+        // Create the event tap
+        let eventMask = (1 << CGEventType.keyDown.rawValue)
+        
+        eventTap = CGEvent.tapCreate(
+            tap: .cghidEventTap,
+            place: .headInsertEventTap,
+            options: .defaultTap,
+            eventsOfInterest: CGEventMask(eventMask),
+            callback: { (proxy, type, event, refcon) -> Unmanaged<CGEvent>? in
+                // Get the AppDelegate instance
+                let appDelegate = Unmanaged<AppDelegate>.fromOpaque(refcon!).takeUnretainedValue()
+                return appDelegate.handleKeyEvent(proxy: proxy, type: type, event: event)
+            },
+            userInfo: UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque())
+        )
+        
+        guard let eventTap = eventTap else {
+            print("Failed to create event tap!")
+            return
+        }
+        
+        // Create a run loop source and add it to the current run loop
+        let runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, eventTap, 0)
+        CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, .commonModes)
+        
+        // Enable the event tap
+        CGEvent.tapEnable(tap: eventTap, enable: true)
+        
+        print("CGEventTap created successfully")
+    }
+    
+    private func handleKeyEvent(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
+        // Handle tap disabled events
+        if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+            if let eventTap = eventTap {
+                CGEvent.tapEnable(tap: eventTap, enable: true)
+            }
+            return Unmanaged.passRetained(event)
+        }
+        
+        // Only handle key down events
+        guard type == .keyDown else {
+            return Unmanaged.passRetained(event)
+        }
+        
+        let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+        let flags = event.flags
+        
+        // Check for Option+Tab (keyCode 48 = Tab)
+        if keyCode == 48 && flags.contains(.maskAlternate) {
+            print("Option+Tab detected via CGEventTap - consuming event")
+            
+            // Trigger panel show on main thread
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                if !self.panel.isVisible {
+                    self.appState.fetchRunningApps()
+                    self.showPanel()
+                }
+            }
+            
+            // Return nil to consume the event (prevent it from reaching other apps)
+            return nil
+        }
+        
+        // Pass through all other events
+        return Unmanaged.passRetained(event)
+    }
+    
+    private func setupFlagsMonitor() {
+        // Hides the panel when Option is released
+        globalFlagsMonitor = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
             guard let self = self else { return }
             if !event.modifierFlags.contains(.option) && self.panel.isVisible {
                 print("Hiding panel")
                 self.panel.orderOut(nil)
             }
         }
-
-        // Local monitor that can consume the event when our app is active
-        localKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            guard let self = self else { return event }	
-            
-            if event.keyCode == 48 && event.modifierFlags.contains(.option) {
-                print("Option+Tab detected (local)")
-                if !self.panel.isVisible {
-                    self.appState.fetchRunningApps()
-                    self.showPanel()
-                }
-                return nil // Consume the event - prevents it from reaching other apps
-            }
-            return event // Pass through other events
-        }
         
-        // Global monitor for when our app isn't focused (can't consume)
-        globalKeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            guard let self = self else { return }
-            if event.keyCode == 48 && event.modifierFlags.contains(.option) {
-                print("Option+Tab detected (global)")
-                if !self.panel.isVisible {
-                    self.appState.fetchRunningApps()
-                    self.showPanel()
-                }
+        localFlagsMonitor = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
+            guard let self = self else { return nil }
+            if !event.modifierFlags.contains(.option) && self.panel.isVisible {
+                print("Hiding panel")
+                self.panel.orderOut(nil)
             }
+            return nil
         }
-        
-        print("Event monitors set up successfully")
     }
-
+    
     func showPanel() {
         print("Showing panel")
         if let screen = NSScreen.main {
@@ -132,14 +182,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
-        if let flagsMonitor = flagsMonitor {
-            NSEvent.removeMonitor(flagsMonitor)
+        // Clean up event tap
+        if let eventTap = eventTap {
+            CGEvent.tapEnable(tap: eventTap, enable: false)
+            CFMachPortInvalidate(eventTap)
         }
-        if let localKeyMonitor = localKeyMonitor {
-            NSEvent.removeMonitor(localKeyMonitor)
+        
+        // Clean up flags monitor
+        if let globalFlagsMonitor = globalFlagsMonitor {
+            NSEvent.removeMonitor(globalFlagsMonitor)
         }
-        if let globalKeyMonitor = globalKeyMonitor {
-            NSEvent.removeMonitor(globalKeyMonitor)
+        if let localFlagsMonitor = localFlagsMonitor {
+            NSEvent.removeMonitor(localFlagsMonitor)
         }
     }
 }

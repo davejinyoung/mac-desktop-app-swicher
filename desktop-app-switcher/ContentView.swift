@@ -1,5 +1,4 @@
 import AppKit
-import HotKey
 import SwiftUI
 
 struct VisualEffectView: NSViewRepresentable {
@@ -23,7 +22,6 @@ struct VisualEffectView: NSViewRepresentable {
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
     @State private var selectedAppID: String?
-    var hotKey = HotKey(key: .tab, modifiers: [.option, .command])
 
     var body: some View {
         HStack {
