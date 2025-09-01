@@ -8,7 +8,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private let appState = AppState()
 
     private var flagsMonitor: Any?
-    private var keyMonitor: Any?
+    private var localKeyMonitor: Any?
+    private var globalKeyMonitor: Any?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         if !checkAccessibilityPermissions() {
@@ -74,22 +75,37 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func setupKeyListeners() {
-        // Hides the panel when Option is released
+        print("Setting up key listeners...")
+        
+        // Global monitor for flags (can't consume, but that's okay for modifier keys)
         flagsMonitor = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
             guard let self = self else { return }
-            print("Flags changed: \(event.modifierFlags)")
             if !event.modifierFlags.contains(.option) && self.panel.isVisible {
                 print("Hiding panel")
                 self.panel.orderOut(nil)
             }
         }
 
-        // Shows the panel when Option+Tab is pressed
-        keyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            guard let self = self else { return }
-            print("Key pressed: \(event.keyCode), modifiers: \(event.modifierFlags)")
+        // Local monitor that can consume the event when our app is active
+        localKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard let self = self else { return event }	
+            
             if event.keyCode == 48 && event.modifierFlags.contains(.option) {
-                print("Option+Tab detected")
+                print("Option+Tab detected (local)")
+                if !self.panel.isVisible {
+                    self.appState.fetchRunningApps()
+                    self.showPanel()
+                }
+                return nil // Consume the event - prevents it from reaching other apps
+            }
+            return event // Pass through other events
+        }
+        
+        // Global monitor for when our app isn't focused (can't consume)
+        globalKeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard let self = self else { return }
+            if event.keyCode == 48 && event.modifierFlags.contains(.option) {
+                print("Option+Tab detected (global)")
                 if !self.panel.isVisible {
                     self.appState.fetchRunningApps()
                     self.showPanel()
@@ -97,11 +113,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
         
-        if flagsMonitor == nil || keyMonitor == nil {
-            print("Failed to set up event monitors - check accessibility permissions")
-        } else {
-            print("Event monitors set up successfully")
-        }
+        print("Event monitors set up successfully")
     }
 
     func showPanel() {
@@ -123,8 +135,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let flagsMonitor = flagsMonitor {
             NSEvent.removeMonitor(flagsMonitor)
         }
-        if let keyMonitor = keyMonitor {
-            NSEvent.removeMonitor(keyMonitor)
+        if let localKeyMonitor = localKeyMonitor {
+            NSEvent.removeMonitor(localKeyMonitor)
+        }
+        if let globalKeyMonitor = globalKeyMonitor {
+            NSEvent.removeMonitor(globalKeyMonitor)
         }
     }
 }
