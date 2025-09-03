@@ -136,13 +136,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     self.appState.fetchRunningApps()
                     self.showPanel()
                 }
+                else {
+                    appState.cycleSelection()
+                }
             }
             
-            // Return nil to consume the event (prevent it from reaching other apps)
             return nil
         }
         
-        // Pass through all other events
         return Unmanaged.passRetained(event)
     }
     

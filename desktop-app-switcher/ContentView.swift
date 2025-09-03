@@ -51,8 +51,8 @@ struct ContentView: View {
         .background(VisualEffectView(material: .hudWindow, blendingMode: .behindWindow))
         .cornerRadius(20)
         .frame(width: appState.screenWidth, height: appState.screenHeight)
-        .onChange(of: appState.runningApps) {
-            selectedAppID = appState.runningApps.first?.id
+        .onChange(of: appState.selectedAppId) {
+            selectedAppID = appState.selectedAppId
         }
     }
 }
