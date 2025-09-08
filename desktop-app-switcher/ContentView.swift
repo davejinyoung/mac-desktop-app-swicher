@@ -42,8 +42,10 @@ struct ContentView: View {
                         .foregroundColor(selectedAppID == app.id ? Color.white : Color.clear)
                         .padding(.bottom, -15)
                 }
-                .onTapGesture {
-                    selectedAppID = app.id
+                .onHover { hover in
+                    if hover {
+                        selectedAppID = app.id
+                    }
                 }
             }
         }
