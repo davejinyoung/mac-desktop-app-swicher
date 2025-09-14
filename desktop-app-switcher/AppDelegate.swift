@@ -136,9 +136,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     self.appState.fetchRunningApps()
                     self.showPanel()
                 }
-                else {
-                    appState.cycleSelection()
-                }
+                appState.cycleSelection()
             }
             
             return nil
