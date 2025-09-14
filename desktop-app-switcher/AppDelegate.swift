@@ -145,23 +145,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return Unmanaged.passRetained(event)
     }
     
+    private func switchSelectedAppToForeground() {
+        self.panel.orderOut(nil)
+        let appToActivate = NSWorkspace
+             .shared.runningApplications.first(where: { $0
+                 .bundleIdentifier == self.appState.selectedAppId })
+        appToActivate?.activate()
+    }
+    
     private func setupFlagsMonitor() {
         // Hides the panel when Option is released
         globalFlagsMonitor = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
             guard let self = self else { return }
             if !event.modifierFlags.contains(.option) && self.panel.isVisible {
-                print("Hiding panel")
-                self.panel.orderOut(nil)
-                let selectedApp = self.appState.runningApps.first(where: { $0.id == self.appState.selectedAppId })
-                print("selected app is " + selectedApp!.name)
+                switchSelectedAppToForeground()
             }
         }
         
         localFlagsMonitor = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
             guard let self = self else { return nil }
             if !event.modifierFlags.contains(.option) && self.panel.isVisible {
-                print("Hiding panel")
-                self.panel.orderOut(nil)
+                switchSelectedAppToForeground()
             }
             return nil
         }
