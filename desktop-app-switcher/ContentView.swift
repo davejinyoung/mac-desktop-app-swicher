@@ -21,7 +21,7 @@ struct VisualEffectView: NSViewRepresentable {
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
-    @State private var selectedAppID: String?
+    @State private var selectedAppId: String?
 
     var body: some View {
         HStack {
@@ -32,19 +32,19 @@ struct ContentView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 120, height: 120)
                         .background(
-                            selectedAppID == app.id ? Color.black.opacity(0.5) : Color.clear
+                            selectedAppId == app.id ? Color.black.opacity(0.5) : Color.clear
                         )
                         .cornerRadius(8)
                         .padding(4)
                     
                     Text(app.name)
                         .lineLimit(1)
-                        .foregroundColor(selectedAppID == app.id ? Color.white : Color.clear)
+                        .foregroundColor(selectedAppId == app.id ? Color.white : Color.clear)
                         .padding(.bottom, -15)
                 }
                 .onHover { hover in
                     if hover {
-                        selectedAppID = app.id
+                        appState.selectedAppId = app.id
                     }
                 }
             }
@@ -54,7 +54,7 @@ struct ContentView: View {
         .cornerRadius(20)
         .frame(width: appState.screenWidth, height: appState.screenHeight)
         .onChange(of: appState.selectedAppId) {
-            selectedAppID = appState.selectedAppId
+            selectedAppId = appState.selectedAppId
         }
     }
 }

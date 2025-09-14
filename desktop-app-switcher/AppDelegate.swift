@@ -154,6 +154,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if !event.modifierFlags.contains(.option) && self.panel.isVisible {
                 print("Hiding panel")
                 self.panel.orderOut(nil)
+                let selectedApp = self.appState.runningApps.first(where: { $0.id == self.appState.selectedAppId })
+                print("selected app is " + selectedApp!.name)
             }
         }
         
