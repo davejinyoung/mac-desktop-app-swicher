@@ -43,7 +43,7 @@ struct ContentView: View {
                         .padding(.bottom, -15)
                 }
                 .onHover { hover in
-                    if hover {
+                    if hover && appState.canHover {
                         appState.selectedAppId = app.id
                     }
                 }

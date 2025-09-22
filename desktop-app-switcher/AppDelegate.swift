@@ -9,6 +9,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var globalFlagsMonitor: Any?
     private var localFlagsMonitor: Any?
+    private var mouseMonitor: Any?
     private var eventTap: CFMachPort?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -133,7 +134,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 if !self.panel.isVisible {
-                    self.appState.fetchRunningApps()
+                    appState.fetchRunningApps()
                     self.showPanel()
                 }
                 appState.cycleSelection()
@@ -149,7 +150,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.panel.orderOut(nil)
         let appToActivate = NSWorkspace
              .shared.runningApplications.first(where: { $0
-                 .bundleIdentifier == self.appState.selectedAppId })
+                 .bundleIdentifier == appState.selectedAppId })
         appToActivate?.activate()
     }
     
@@ -159,6 +160,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             guard let self = self else { return }
             if !event.modifierFlags.contains(.option) && self.panel.isVisible {
                 switchSelectedAppToForeground()
+                self.appState.canHover = false
             }
         }
         
@@ -166,8 +168,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             guard let self = self else { return nil }
             if !event.modifierFlags.contains(.option) && self.panel.isVisible {
                 switchSelectedAppToForeground()
+                self.appState.canHover = false
             }
             return nil
+        }
+        
+        mouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved) { event in
+            if self.panel.isVisible {
+                self.appState.canHover = true
+            }
         }
     }
     

@@ -13,6 +13,7 @@ class AppState: ObservableObject {
     @Published var selectedAppId: String?
     @Published var screenWidth: CGFloat = 0
     @Published var screenHeight: CGFloat = 0
+    @Published var canHover: Bool = false
 
     func fetchRunningApps() {
         let allRunnableApps = NSWorkspace.shared.runningApplications
@@ -47,6 +48,7 @@ class AppState: ObservableObject {
     }
     
     func cycleSelection() {
+        print("running apps are: " + runningApps.map(\.self).map(\.name).joined(separator: ", "))
         guard !runningApps.isEmpty else {
             return
         }
