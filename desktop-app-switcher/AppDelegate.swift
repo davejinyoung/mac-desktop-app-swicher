@@ -9,7 +9,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var globalFlagsMonitor: Any?
     private var localFlagsMonitor: Any?
-    private var mouseMonitor: Any?
+    private var globalMouseMonitor: Any?
+    private var localMouseMonitor: Any?
     private var eventTap: CFMachPort?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -160,7 +161,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             guard let self = self else { return }
             if !event.modifierFlags.contains(.option) && self.panel.isVisible {
                 switchSelectedAppToForeground()
-                self.appState.canHover = false
+                appState.canHover = false
             }
         }
         
@@ -168,15 +169,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             guard let self = self else { return nil }
             if !event.modifierFlags.contains(.option) && self.panel.isVisible {
                 switchSelectedAppToForeground()
-                self.appState.canHover = false
+                appState.canHover = false
             }
             return nil
         }
         
-        mouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved) { event in
+        globalMouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved) { [weak self] event in
+            guard let self = self else { return }
             if self.panel.isVisible {
-                self.appState.canHover = true
+                appState.canHover = true
             }
+        }
+        
+        localMouseMonitor = NSEvent.addLocalMonitorForEvents(matching: .mouseMoved) { [weak self] event in
+            guard let self = self else { return event }
+            if self.panel.isVisible {
+                appState.canHover = true
+            }
+            return event
         }
     }
     
@@ -208,6 +218,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         if let localFlagsMonitor = localFlagsMonitor {
             NSEvent.removeMonitor(localFlagsMonitor)
+        }
+        if let globalMouseMonitor = globalMouseMonitor {
+            NSEvent.removeMonitor(globalMouseMonitor)
+        }
+        if let localMouseMonitor = localMouseMonitor {
+            NSEvent.removeMonitor(localMouseMonitor)
         }
     }
 }
