@@ -12,6 +12,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var globalMouseMonitor: Any?
     private var localMouseMonitor: Any?
     private var eventTap: CFMachPort?
+    private var showPanelWorkItem: DispatchWorkItem?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         if !checkAccessibilityPermissions() {
@@ -136,9 +137,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 guard let self = self else { return }
                 if !self.panel.isVisible {
                     appState.fetchRunningApps()
-                    self.showPanel()
+                    appState.cycleSelection()
+                    self.scheduleShowPanel()
+                } else {
+                    appState.cycleSelection()
                 }
-                appState.cycleSelection()
             }
             
             return nil
@@ -159,9 +162,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Hides the panel when Option is released
         globalFlagsMonitor = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
             guard let self = self else { return }
-            if !event.modifierFlags.contains(.option) && self.panel.isVisible {
+            if !event.modifierFlags.contains(.option) {
+                self.showPanelWorkItem?.cancel()
+                if self.panel.isVisible {
+                    appState.canHover = false
+                }
                 switchSelectedAppToForeground()
-                appState.canHover = false
             }
         }
         
@@ -188,6 +194,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             return event
         }
+    }
+    
+    private func scheduleShowPanel() {
+        showPanelWorkItem?.cancel()
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.showPanel()
+            self?.appState.fetchRunningApps()
+            self?.appState.cycleSelection()
+        }
+        showPanelWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: workItem)
     }
     
     func showPanel() {

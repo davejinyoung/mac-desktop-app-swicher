@@ -48,7 +48,8 @@ class AppState: ObservableObject {
     }
     
     func cycleSelection() {
-//        print("running apps are: " + runningApps.map(\.self).map(\.name).joined(separator: ", "))
+        print("selected app is: " + (selectedAppId ?? "none"))
+        print("running apps are: " + runningApps.map(\.self).map(\.name).joined(separator: ", "))
         guard !runningApps.isEmpty else {
             return
         }
