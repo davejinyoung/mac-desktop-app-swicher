@@ -32,15 +32,23 @@ struct ContentView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 120, height: 120)
                         .background(
-                            selectedAppId == app.id ? Color.gray.opacity(0.5) : Color.clear
+                            Group {
+                                if selectedAppId == app.id {
+                                    RoundedRectangle(cornerRadius: 32)
+                                        .fill(Color.gray.opacity(0.7))
+                                        .frame(width: 114, height: 114)
+                                } else {
+                                    Color.clear
+                                }
+                            }
                         )
                         .cornerRadius(30)
-                        .padding(2)
+                        .padding(.vertical, 5)
                     
                     Text(app.name)
                         .lineLimit(1)
                         .foregroundColor(selectedAppId == app.id ? Color.white : Color.clear)
-                        .padding(.bottom, -15)
+                        .padding(.bottom, -12)
                 }
                 .onHover { hover in
                     if hover && appState.canHover {
@@ -49,8 +57,8 @@ struct ContentView: View {
                 }
             }
         }
-        .padding(25)
-        .glassEffect(in: .rect(cornerRadius: 40))
+        .padding(20)
+        .glassEffect(in: .rect(cornerRadius: 50))
         .frame(width: appState.screenWidth, height: appState.screenHeight)
         .onChange(of: appState.selectedAppId) {
             selectedAppId = appState.selectedAppId
