@@ -48,17 +48,18 @@ class AppState: ObservableObject {
     }
     
     func cycleSelection() {
-        print("selected app is: " + (selectedAppId ?? "none"))
         print("running apps are: " + runningApps.map(\.self).map(\.name).joined(separator: ", "))
         guard !runningApps.isEmpty else {
             return
         }
         
         if let selectedAppId = selectedAppId,
-           let curIndex = runningApps.firstIndex(where: { $0.id == selectedAppId }) {
+           let curIndex = runningApps.firstIndex(where: { $0.id == selectedAppId })
+        {
             let nextIndex = (curIndex + 1) % runningApps.count
             self.selectedAppId = runningApps[nextIndex].id
-        } else {
+        }
+        else {
             self.selectedAppId = runningApps.first?.id
         }
     }

@@ -78,8 +78,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func setupEventTap() {
-        print("Setting up CGEventTap...")
-        
         // Create the event tap
         let eventMask = (1 << CGEventType.keyDown.rawValue)
         
@@ -97,7 +95,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         )
         
         guard let eventTap = eventTap else {
-            print("Failed to create event tap!")
             return
         }
         
@@ -107,8 +104,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Enable the event tap
         CGEvent.tapEnable(tap: eventTap, enable: true)
-        
-        print("CGEventTap created successfully")
     }
     
     private func handleKeyEvent(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
@@ -130,8 +125,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Check for Option+Tab (keyCode 48 = Tab)
         if keyCode == 48 && flags.contains(.maskAlternate) {
-            print("Option+Tab detected via CGEventTap - consuming event")
-            
             // Trigger panel show on main thread
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
@@ -155,14 +148,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let appToActivate = NSWorkspace
              .shared.runningApplications.first(where: { $0
                  .bundleIdentifier == appState.selectedAppId })
-        appToActivate?.activate()
+        if let frontmostApp = NSWorkspace.shared.frontmostApplication {
+            print("Frontmost app: \(frontmostApp.localizedName ?? "Unknown") (\(frontmostApp.bundleIdentifier ?? "No Bundle ID"))")
+        }
+        print("app to activate is ", appToActivate)
+        let activated = appToActivate?.activate(options: [.activateAllWindows]) ?? false
+        print("Did it activate?: ", activated)
     }
     
     private func setupFlagsMonitor() {
         // Hides the panel when Option is released
         globalFlagsMonitor = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
             guard let self = self else { return }
-            if !event.modifierFlags.contains(.option) {
+            if !event.modifierFlags.contains(.option), let workItem = self.showPanelWorkItem, !workItem.isCancelled {
                 self.showPanelWorkItem?.cancel()
                 if self.panel.isVisible {
                     appState.canHover = false
@@ -208,7 +206,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func showPanel() {
-        print("Showing panel")
         if let screen = NSScreen.main {
             let screenRect = screen.visibleFrame
             let newSize = CGSize(width: appState.screenWidth, height: appState.screenHeight)
