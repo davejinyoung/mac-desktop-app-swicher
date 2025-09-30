@@ -11,3 +11,14 @@ This can be overwhelming and counterproductive if you use multiple desktops to o
 This application is designed to solve that problem. 
 It limits the app switcher to only the applications that are running on your current desktop. 
 This helps you stay focused on your current context and switch between relevant apps more efficiently.
+
+### Usage
+1. Clone the repository and open the project on Xcode.
+2. Navigate to the "Product" tab on the top bar and click "Archive".
+3. On the Archives modal, click "Distribute App".
+4. On the method of distribution modal, click "Custom" and click "Next".
+5. Choose the "Copy App" option and click "Next"
+6. Export the app.
+7. Navigate to the location where the app was exported and run the app.
+8. Allow prompted permissions requests in System Settings.
+9. Use Option+Tab to navigate between apps!
