@@ -22,3 +22,5 @@ This helps you stay focused on your current context and switch between relevant 
 7. Navigate to the location where the app was exported and run the app.
 8. Allow prompted permissions requests in System Settings.
 9. Use Option+Tab to navigate between apps!
+
+<img width="736" height="214" alt="Screenshot 2025-09-29 at 10 33 21 PM" src="https://github.com/user-attachments/assets/8c841eac-078a-4c9f-af16-a8632b3b8353" />
