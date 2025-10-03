@@ -123,6 +123,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
         let flags = event.flags
         
+        let isReverse: Bool = flags.contains(.maskShift)
+        
         // Check for Option+Tab (keyCode 48 = Tab)
         if keyCode == 48 && flags.contains(.maskAlternate) {
             // Trigger panel show on main thread
@@ -130,10 +132,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 guard let self = self else { return }
                 if !self.panel.isVisible {
                     appState.fetchRunningApps()
-                    appState.cycleSelection()
-                    self.scheduleShowPanel()
+                    appState.cycleSelection(reverse: isReverse)
+                    self.scheduleShowPanel(reverse: isReverse)
                 } else {
-                    appState.cycleSelection()
+                    appState.cycleSelection(reverse: isReverse)
                 }
             }
             
@@ -148,12 +150,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let appToActivate = NSWorkspace
              .shared.runningApplications.first(where: { $0
                  .bundleIdentifier == appState.selectedAppId })
-        if let frontmostApp = NSWorkspace.shared.frontmostApplication {
-            print("Frontmost app: \(frontmostApp.localizedName ?? "Unknown") (\(frontmostApp.bundleIdentifier ?? "No Bundle ID"))")
-        }
-        print("app to activate is ", appToActivate)
         let activated = appToActivate?.activate(options: [.activateAllWindows]) ?? false
-        print("Did it activate?: ", activated)
     }
     
     private func setupFlagsMonitor() {
@@ -194,12 +191,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
-    private func scheduleShowPanel() {
+    private func scheduleShowPanel(reverse: Bool = false) {
         showPanelWorkItem?.cancel()
         let workItem = DispatchWorkItem { [weak self] in
             self?.showPanel()
             self?.appState.fetchRunningApps()
-            self?.appState.cycleSelection()
+            self?.appState.cycleSelection(reverse: reverse)
         }
         showPanelWorkItem = workItem
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: workItem)
