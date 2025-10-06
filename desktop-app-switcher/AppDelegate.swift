@@ -184,30 +184,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let isReverse: Bool = flags.contains(.maskShift)
         
         // Check for Option+Tab (keyCode 48 = Tab)
-        if flags.contains(.maskAlternate) {
-            if keyCode == 48 {
-                // Trigger panel show on main thread
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else { return }
-                    if !self.panel.isVisible {
-                        appState.fetchRunningApps()
-                        appState.cycleSelection(reverse: isReverse)
-                        self.scheduleShowPanel(reverse: isReverse)
-                    } else {
-                        appState.cycleSelection(reverse: isReverse)
-                    }
-                }
-            } else if self.panel.isVisible {
-                switch keyCode {
-                case 124: // Checks for right arrow key
-                    appState.cycleSelection()
-                case 123: // Checks for left arrow key
-                    appState.cycleSelection(reverse: true)
-                default:
-                    break
+        if keyCode == 48 && flags.contains(.maskAlternate) {
+            // Trigger panel show on main thread
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                if !self.panel.isVisible {
+                    appState.fetchRunningApps()
+                    appState.cycleSelection(reverse: isReverse)
+                    self.scheduleShowPanel(reverse: isReverse)
+                } else {
+                    appState.cycleSelection(reverse: isReverse)
                 }
             }
-            
+            return nil
+        } else if self.panel.isVisible && flags.contains(.maskAlternate) {
+            switch keyCode {
+            case 124: // Checks for right arrow key
+                appState.cycleSelection()
+            case 123: // Checks for left arrow key
+                appState.cycleSelection(reverse: true)
+            default:
+                break
+            }
             return nil
         }
         
