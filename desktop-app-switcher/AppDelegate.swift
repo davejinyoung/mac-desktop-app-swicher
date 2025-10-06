@@ -40,7 +40,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
         let statusMenu = NSMenu()
-        statusMenu.addItem(withTitle: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        let displayName = (Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String)
+
+        statusMenu.addItem(withTitle: "Quit \(displayName!)", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         statusItem.menu = statusMenu
         self.statusItem = statusItem
     }
