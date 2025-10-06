@@ -217,7 +217,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let appToActivate = NSWorkspace
              .shared.runningApplications.first(where: { $0
                  .bundleIdentifier == appState.selectedAppId })
-        let activated = appToActivate?.activate(options: [.activateAllWindows]) ?? false
+        appToActivate?.activate(options: [.activateAllWindows])
     }
     
     private func scheduleShowPanel(reverse: Bool = false) {
