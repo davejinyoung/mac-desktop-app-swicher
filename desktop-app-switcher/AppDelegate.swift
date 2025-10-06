@@ -4,6 +4,8 @@ import Carbon
 
 class AppDelegate: NSObject, NSApplicationDelegate {
 
+    private var statusItem: NSStatusItem?
+
     private var panel: NSPanel!
     private let appState = AppState()
 
@@ -11,7 +13,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var localFlagsMonitor: Any?
     private var globalMouseMonitor: Any?
     private var localMouseMonitor: Any?
+    
     private var eventTap: CFMachPort?
+    
     private var showPanelWorkItem: DispatchWorkItem?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -20,37 +24,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         
+        createMenu()
         setupPanel()
         setupEventTap()
         setupFlagsMonitor()
     }
     
-    private func checkAccessibilityPermissions() -> Bool {
-        let checkOptPrompt = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString
-        let options = [checkOptPrompt: false]
-        let accessEnabled = AXIsProcessTrustedWithOptions(options as CFDictionary)
-        return accessEnabled
-    }
-    
-    private func requestAccessibilityPermissions() {
-        let checkOptPrompt = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString
-        let options = [checkOptPrompt: true]
-        let accessEnabled = AXIsProcessTrustedWithOptions(options as CFDictionary)
-        
-        if !accessEnabled {
-            let alert = NSAlert()
-            alert.messageText = "Accessibility Access Required"
-            alert.informativeText = "This app requires accessibility access to monitor global keyboard shortcuts. Please grant access in System Preferences > Security & Privacy > Accessibility, then restart the app."
-            alert.alertStyle = .warning
-            alert.addButton(withTitle: "Open System Preferences")
-            alert.addButton(withTitle: "Quit")
-            
-            let response = alert.runModal()
-            if response == .alertFirstButtonReturn {
-                NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
+    private func createMenu() {
+        let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        if let button = statusItem.button {
+            if #available(macOS 11.0, *) {
+                button.image = NSImage(systemSymbolName: "arrow.right.arrow.left", accessibilityDescription: "Desktop App Switcher")
+            } else {
+                button.image = NSImage(named: NSImage.actionTemplateName)
             }
-            NSApplication.shared.terminate(self)
         }
+        let statusMenu = NSMenu()
+        statusMenu.addItem(withTitle: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        statusItem.menu = statusMenu
+        self.statusItem = statusItem
     }
     
     private func setupPanel() {
@@ -104,6 +96,72 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Enable the event tap
         CGEvent.tapEnable(tap: eventTap, enable: true)
+    }
+    
+    private func setupFlagsMonitor() {
+        // Hides the panel when Option is released
+        globalFlagsMonitor = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
+            guard let self = self else { return }
+            if !event.modifierFlags.contains(.option), let workItem = self.showPanelWorkItem, !workItem.isCancelled {
+                self.showPanelWorkItem?.cancel()
+                if self.panel.isVisible {
+                    appState.canHover = false
+                }
+                switchSelectedAppToForeground()
+            }
+        }
+        
+        localFlagsMonitor = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
+            guard let self = self else { return nil }
+            if !event.modifierFlags.contains(.option) && self.panel.isVisible {
+                switchSelectedAppToForeground()
+                appState.canHover = false
+            }
+            return nil
+        }
+        
+        globalMouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved) { [weak self] event in
+            guard let self = self else { return }
+            if self.panel.isVisible {
+                appState.canHover = true
+            }
+        }
+        
+        localMouseMonitor = NSEvent.addLocalMonitorForEvents(matching: .mouseMoved) { [weak self] event in
+            guard let self = self else { return event }
+            if self.panel.isVisible {
+                appState.canHover = true
+            }
+            return event
+        }
+    }
+    
+    private func checkAccessibilityPermissions() -> Bool {
+        let checkOptPrompt = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString
+        let options = [checkOptPrompt: false]
+        let accessEnabled = AXIsProcessTrustedWithOptions(options as CFDictionary)
+        return accessEnabled
+    }
+    
+    private func requestAccessibilityPermissions() {
+        let checkOptPrompt = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString
+        let options = [checkOptPrompt: true]
+        let accessEnabled = AXIsProcessTrustedWithOptions(options as CFDictionary)
+        
+        if !accessEnabled {
+            let alert = NSAlert()
+            alert.messageText = "Accessibility Access Required"
+            alert.informativeText = "This app requires accessibility access to monitor global keyboard shortcuts. Please grant access in System Preferences > Security & Privacy > Accessibility, then restart the app."
+            alert.alertStyle = .warning
+            alert.addButton(withTitle: "Open System Preferences")
+            alert.addButton(withTitle: "Quit")
+            
+            let response = alert.runModal()
+            if response == .alertFirstButtonReturn {
+                NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
+            }
+            NSApplication.shared.terminate(self)
+        }
     }
     
     private func handleKeyEvent(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
@@ -164,44 +222,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let activated = appToActivate?.activate(options: [.activateAllWindows]) ?? false
     }
     
-    private func setupFlagsMonitor() {
-        // Hides the panel when Option is released
-        globalFlagsMonitor = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
-            guard let self = self else { return }
-            if !event.modifierFlags.contains(.option), let workItem = self.showPanelWorkItem, !workItem.isCancelled {
-                self.showPanelWorkItem?.cancel()
-                if self.panel.isVisible {
-                    appState.canHover = false
-                }
-                switchSelectedAppToForeground()
-            }
-        }
-        
-        localFlagsMonitor = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
-            guard let self = self else { return nil }
-            if !event.modifierFlags.contains(.option) && self.panel.isVisible {
-                switchSelectedAppToForeground()
-                appState.canHover = false
-            }
-            return nil
-        }
-        
-        globalMouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved) { [weak self] event in
-            guard let self = self else { return }
-            if self.panel.isVisible {
-                appState.canHover = true
-            }
-        }
-        
-        localMouseMonitor = NSEvent.addLocalMonitorForEvents(matching: .mouseMoved) { [weak self] event in
-            guard let self = self else { return event }
-            if self.panel.isVisible {
-                appState.canHover = true
-            }
-            return event
-        }
-    }
-    
     private func scheduleShowPanel(reverse: Bool = false) {
         showPanelWorkItem?.cancel()
         let workItem = DispatchWorkItem { [weak self] in
@@ -249,3 +269,4 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 }
+
