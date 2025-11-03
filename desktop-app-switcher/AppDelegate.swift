@@ -1,33 +1,62 @@
 import AppKit
 import SwiftUI
 import Carbon
+import KeyboardShortcuts
 
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var statusItem: NSStatusItem?
-
     private var panel: NSPanel!
     private let appState = AppState()
-
     private var globalFlagsMonitor: Any?
     private var localFlagsMonitor: Any?
     private var globalMouseMonitor: Any?
     private var localMouseMonitor: Any?
-    
     private var eventTap: CFMachPort?
-    
     private var showPanelWorkItem: DispatchWorkItem?
+    private var settingsWindow: NSWindow? = nil
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         if !checkAccessibilityPermissions() {
             requestAccessibilityPermissions()
             return
         }
-        
         createMenu()
         setupPanel()
         setupEventTap()
         setupFlagsMonitor()
+    }
+    
+    @objc private func openSettings() {
+        if let window = settingsWindow {
+            window.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+        let hostingController = NSHostingController(rootView: SettingsView().environmentObject(appState))
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 380, height: 220),
+            styleMask: [.titled, .closable, .utilityWindow],
+            backing: .buffered,
+            defer: false
+        )
+        window.title = "Settings"
+        window.isReleasedWhenClosed = false
+        if let screen = NSScreen.main {
+            let screenFrame = screen.visibleFrame
+            let windowSize = window.frame.size
+            let x = screenFrame.origin.x + (screenFrame.size.width  - windowSize.width)  / 2
+            let y = screenFrame.origin.y + (screenFrame.size.height - windowSize.height) / 2
+            window.setFrameOrigin(NSPoint(x: x, y: y))
+        }
+        window.contentViewController = hostingController
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        
+        NotificationCenter.default.addObserver(forName: NSWindow.willCloseNotification, object: window, queue: .main) { [weak self] _ in
+            self?.settingsWindow = nil
+        }
+        settingsWindow = window
     }
     
     private func createMenu() {
@@ -41,7 +70,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let statusMenu = NSMenu()
         let displayName = (Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String)
-
+        
+        statusMenu.addItem(withTitle: "Settings", action: #selector(openSettings), keyEquivalent: ",")
+        statusMenu.addItem(NSMenuItem.separator())
         statusMenu.addItem(withTitle: "Quit \(displayName!)", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         statusItem.menu = statusMenu
         self.statusItem = statusItem
@@ -167,6 +198,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func handleKeyEvent(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
+        let shortcutModifierRaw: Int = SettingsStore.shared.shortcutModifierRaw
+        let shortcutModifierReverseRaw: Int = SettingsStore.shared.shortcutModifierReverseRaw
+        let shortcutKey: Int = SettingsStore.shared.shortcutKey
+        
         // Handle tap disabled events
         if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
             if let eventTap = eventTap {
@@ -184,9 +219,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let flags = event.flags
         
         let isReverse: Bool = flags.contains(.maskShift)
+        print(KeyboardShortcuts.getShortcut(for: .switchApps) ?? "No shortcut assigned")
+        
+        if appState.isChoosingShortcut {
+            SettingsStore.shared.shortcutModifierRaw = Int(flags.rawValue)
+            SettingsStore.shared.shortcutKey = Int(keyCode)
+            return nil
+        }
         
         // Check for Option+Tab (keyCode 48 = Tab)
-        if keyCode == 48 && flags.contains(.maskAlternate) {
+        if keyCode == shortcutKey && (flags.rawValue == shortcutModifierRaw || flags.rawValue == shortcutModifierReverseRaw) {
             // Trigger panel show on main thread
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }

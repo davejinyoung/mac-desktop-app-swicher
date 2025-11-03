@@ -14,6 +14,7 @@ class AppState: ObservableObject {
     @Published var screenWidth: CGFloat = 0
     @Published var screenHeight: CGFloat = 0
     @Published var canHover: Bool = false
+    @Published var isChoosingShortcut: Bool = false
 
     func fetchRunningApps() {
         let allRunnableApps = NSWorkspace.shared.runningApplications

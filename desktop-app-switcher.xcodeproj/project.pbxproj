@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		EDABF2B32E4DA9E200B11677 /* HotKey in Frameworks */ = {isa = PBXBuildFile; productRef = EDABF2B22E4DA9E200B11677 /* HotKey */; };
+		ED22EC422EB6B3CB00E674F7 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = ED22EC412EB6B3CB00E674F7 /* KeyboardShortcuts */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,7 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EDABF2B32E4DA9E200B11677 /* HotKey in Frameworks */,
+				ED22EC422EB6B3CB00E674F7 /* KeyboardShortcuts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,7 +130,7 @@
 			);
 			name = "desktop-app-switcher";
 			packageProductDependencies = (
-				EDABF2B22E4DA9E200B11677 /* HotKey */,
+				ED22EC412EB6B3CB00E674F7 /* KeyboardShortcuts */,
 			);
 			productName = "desktop-app-switcher";
 			productReference = EDABF27A2E46F74B00B11677 /* desktop-app-switcher.app */;
@@ -215,7 +215,7 @@
 			mainGroup = EDABF2712E46F74B00B11677;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				EDABF2B12E4DA9E200B11677 /* XCRemoteSwiftPackageReference "HotKey" */,
+				ED22EC402EB6B3CB00E674F7 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EDABF27B2E46F74B00B11677 /* Products */;
@@ -591,21 +591,21 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		EDABF2B12E4DA9E200B11677 /* XCRemoteSwiftPackageReference "HotKey" */ = {
+		ED22EC402EB6B3CB00E674F7 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/soffes/HotKey.git";
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		EDABF2B22E4DA9E200B11677 /* HotKey */ = {
+		ED22EC412EB6B3CB00E674F7 /* KeyboardShortcuts */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = EDABF2B12E4DA9E200B11677 /* XCRemoteSwiftPackageReference "HotKey" */;
-			productName = HotKey;
+			package = ED22EC402EB6B3CB00E674F7 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
