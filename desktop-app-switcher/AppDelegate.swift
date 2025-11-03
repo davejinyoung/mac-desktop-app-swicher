@@ -1,7 +1,6 @@
 import AppKit
 import SwiftUI
 import Carbon
-import KeyboardShortcuts
 
 class AppDelegate: NSObject, NSApplicationDelegate {
 
@@ -219,7 +218,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let flags = event.flags
         
         let isReverse: Bool = flags.contains(.maskShift)
-        print(KeyboardShortcuts.getShortcut(for: .switchApps) ?? "No shortcut assigned")
         
         if appState.isChoosingShortcut {
             SettingsStore.shared.shortcutModifierRaw = Int(flags.rawValue)

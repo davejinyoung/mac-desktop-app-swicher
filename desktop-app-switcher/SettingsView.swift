@@ -1,5 +1,4 @@
 import SwiftUI
-import KeyboardShortcuts
 
 struct SettingsView: View {
     @ObservedObject var settings = SettingsStore.shared

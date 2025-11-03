@@ -6,10 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		ED22EC422EB6B3CB00E674F7 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = ED22EC412EB6B3CB00E674F7 /* KeyboardShortcuts */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXContainerItemProxy section */
 		EDABF28C2E46F74C00B11677 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -69,7 +65,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ED22EC422EB6B3CB00E674F7 /* KeyboardShortcuts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,7 +125,6 @@
 			);
 			name = "desktop-app-switcher";
 			packageProductDependencies = (
-				ED22EC412EB6B3CB00E674F7 /* KeyboardShortcuts */,
 			);
 			productName = "desktop-app-switcher";
 			productReference = EDABF27A2E46F74B00B11677 /* desktop-app-switcher.app */;
@@ -215,7 +209,6 @@
 			mainGroup = EDABF2712E46F74B00B11677;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				ED22EC402EB6B3CB00E674F7 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EDABF27B2E46F74B00B11677 /* Products */;
@@ -589,25 +582,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		ED22EC402EB6B3CB00E674F7 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.4.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		ED22EC412EB6B3CB00E674F7 /* KeyboardShortcuts */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = ED22EC402EB6B3CB00E674F7 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
-			productName = KeyboardShortcuts;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EDABF2722E46F74B00B11677 /* Project object */;
 }
