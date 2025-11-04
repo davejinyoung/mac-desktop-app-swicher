@@ -131,25 +131,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func setupFlagsMonitor() {
-        // Hides the panel when Option is released
         globalFlagsMonitor = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
             guard let self = self else { return }
-            if !event.modifierFlags.contains(.option), let workItem = self.showPanelWorkItem, !workItem.isCancelled {
-                self.showPanelWorkItem?.cancel()
-                if self.panel.isVisible {
-                    appState.canHover = false
-                }
-                switchSelectedAppToForeground()
-            }
+            _ = self.flagMonitorHandler(event: event)
         }
         
         localFlagsMonitor = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
             guard let self = self else { return nil }
-            if !event.modifierFlags.contains(.option) && self.panel.isVisible {
-                switchSelectedAppToForeground()
-                appState.canHover = false
-            }
-            return nil
+            let handled = self.flagMonitorHandler(event: event)
+            return handled ? nil : event
         }
         
         globalMouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved) { [weak self] event in
@@ -166,6 +156,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             return event
         }
+    }
+    
+    private func flagMonitorHandler(event: NSEvent) -> Bool {
+        if !event.modifierFlags.contains(NSEvent.ModifierFlags(rawValue: UInt(SettingsStore.shared.shortcutModifierRaw))),
+           let workItem = showPanelWorkItem,
+           !workItem.isCancelled {
+            showPanelWorkItem?.cancel()
+            if panel.isVisible {
+                appState.canHover = false
+            }
+            switchSelectedAppToForeground()
+            return true
+        }
+        return false
     }
     
     private func checkAccessibilityPermissions() -> Bool {
@@ -198,7 +202,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private func handleKeyEvent(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
         let shortcutModifierRaw: Int = SettingsStore.shared.shortcutModifierRaw
-        let shortcutModifierReverseRaw: Int = SettingsStore.shared.shortcutModifierReverseRaw
         let shortcutKey: Int = SettingsStore.shared.shortcutKey
         
         // Handle tap disabled events
@@ -222,11 +225,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if appState.isChoosingShortcut {
             SettingsStore.shared.shortcutModifierRaw = Int(flags.rawValue)
             SettingsStore.shared.shortcutKey = Int(keyCode)
+            appState.isChoosingShortcut = false
             return nil
         }
         
         // Check for Option+Tab (keyCode 48 = Tab)
-        if keyCode == shortcutKey && (flags.rawValue == shortcutModifierRaw || flags.rawValue == shortcutModifierReverseRaw) {
+        if keyCode == shortcutKey && (flags.contains(CGEventFlags(rawValue: UInt64(shortcutModifierRaw)))) {
             // Trigger panel show on main thread
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
@@ -239,7 +243,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
             }
             return nil
-        } else if self.panel.isVisible && flags.contains(.maskAlternate) {
+        } else if self.panel.isVisible && flags.contains(CGEventFlags(rawValue: UInt64(shortcutModifierRaw))) {
             switch keyCode {
             case 124: // Checks for right arrow key
                 appState.cycleSelection()

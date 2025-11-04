@@ -10,19 +10,15 @@ struct SettingsView: View {
             HStack {
                 Text("Switch Apps Shortcut:")
                 Button("\(iconForModifierFlags(CGEventFlags(rawValue: UInt64(settings.shortcutModifierRaw))))\(iconForKeyCode(settings.shortcutKey))") {
-                    showPopover = true
                     appState.isChoosingShortcut = true
                 }
-               .popover(isPresented: $showPopover, attachmentAnchor: .rect(.bounds), arrowEdge: .trailing) {
+                .popover(isPresented: $appState.isChoosingShortcut, attachmentAnchor: .rect(.bounds), arrowEdge: .trailing) {
                    VStack {
                        Text("Choose any modifier + key")
                            .font(.callout)
                    }
                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                    .padding()
-               }
-               .onChange(of: showPopover) { oldValue, newValue in
-                   appState.isChoosingShortcut = newValue
                }
             }
         }
