@@ -36,13 +36,10 @@ struct ContentView: View {
                                 if selectedAppId == app.id {
                                     RoundedRectangle(cornerRadius: 32)
                                         .fill(Color.gray.opacity(0.7))
-                                        .frame(width: 114, height: 114)
-                                } else {
-                                    Color.clear
+                                        .padding(3)
                                 }
                             }
                         )
-                        .cornerRadius(30)
                         .padding(.vertical, 5)
                     
                     Text(app.name)
@@ -58,7 +55,7 @@ struct ContentView: View {
             }
         }
         .padding(20)
-        .glassEffect(in: .rect(cornerRadius: 50))
+        .glassEffect(.clear, in: .rect(cornerRadius: 50))
         .frame(width: appState.screenWidth, height: appState.screenHeight)
         .onChange(of: appState.selectedAppId) {
             selectedAppId = appState.selectedAppId
