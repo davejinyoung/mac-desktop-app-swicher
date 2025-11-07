@@ -30,11 +30,12 @@ struct ContentView: View {
                     Image(nsImage: app.icon)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 120, height: 120)
+                        .frame(width: appState.appIconSize, height: appState.appIconSize)
+                        .clipShape(RoundedRectangle(cornerRadius: appState.appIconSize * 0.2, style: .continuous))
                         .background(
                             Group {
                                 if selectedAppId == app.id {
-                                    RoundedRectangle(cornerRadius: 32)
+                                    RoundedRectangle(cornerRadius: appState.appIconSize * 0.2, style: .continuous)
                                         .fill(Color.gray.opacity(0.7))
                                         .padding(3)
                                 }
@@ -43,6 +44,7 @@ struct ContentView: View {
                         .padding(.vertical, 5)
                     
                     Text(app.name)
+                        .frame(width: appState.appIconSize)
                         .lineLimit(1)
                         .foregroundColor(selectedAppId == app.id ? Color.white : Color.clear)
                         .padding(.bottom, -12)

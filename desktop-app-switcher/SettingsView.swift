@@ -4,7 +4,6 @@ struct SettingsView: View {
     @ObservedObject var settings = SettingsStore.shared
     @State private var showPopover: Bool = false
     @State private var isEditing = false
-    @State private var testing: CGFloat = 0
     @EnvironmentObject var appState: AppState
     
     var body: some View {
@@ -26,14 +25,15 @@ struct SettingsView: View {
             HStack {
                 Text("Panel size:")
                 Slider(
-                    value: $appState.screenWidth,
-                    in: 500...1000,
+                    value: $appState.appIconSize,
+                    in: 40...200,
                     onEditingChanged: { editing in
                         isEditing = editing
                     }
                 )
                 .onChange(of: isEditing) {
                     isEditing ? appState.showPanel() : appState.panel.orderOut(nil)
+                    SettingsStore.shared.appIconSize = appState.appIconSize
                 }
             }
         }

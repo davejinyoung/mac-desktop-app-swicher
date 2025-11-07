@@ -11,6 +11,7 @@ struct AppInfo: Identifiable, Equatable {
 class AppState: ObservableObject {
     @Published var runningApps: [AppInfo] = []
     @Published var selectedAppId: String?
+    @Published var appIconSize: CGFloat = SettingsStore.shared.appIconSize
     @Published var screenWidth: CGFloat = 0
     @Published var screenHeight: CGFloat = 0
     @Published var canHover: Bool = false

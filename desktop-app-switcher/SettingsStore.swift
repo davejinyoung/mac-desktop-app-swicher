@@ -7,6 +7,7 @@ class SettingsStore: ObservableObject {
     private enum Keys {
         static let shortcutModifierRaw = "shortcutModifierRaw"
         static let shortcutKey = "shortcutKey"
+        static let appIconSize = "appIconSizeKey"
     }
     
     @Published var shortcutModifierRaw: Int {
@@ -21,8 +22,15 @@ class SettingsStore: ObservableObject {
         }
     }
     
+    @Published var appIconSize: CGFloat {
+        didSet {
+            UserDefaults.standard.set(appIconSize, forKey: Keys.appIconSize)
+        }
+    }
+    
     private init() {
         self.shortcutModifierRaw = UserDefaults.standard.object(forKey: Keys.shortcutModifierRaw) as? Int ?? 524576 // Option modifier
         self.shortcutKey = UserDefaults.standard.object(forKey: Keys.shortcutKey) as? Int ?? 48 // Tab key
+        self.appIconSize = UserDefaults.standard.object(forKey: Keys.appIconSize) as? CGFloat ?? 120
     }
 }
