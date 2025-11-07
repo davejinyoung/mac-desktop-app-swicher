@@ -5,7 +5,6 @@ import Carbon
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var statusItem: NSStatusItem?
-    private var panel: NSPanel!
     private let appState = AppState()
     private var globalFlagsMonitor: Any?
     private var localFlagsMonitor: Any?
@@ -78,17 +77,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func setupPanel() {
-        panel = NSPanel(
+        appState.panel = NSPanel(
             contentRect: .zero,
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
         )
 
-        panel.isOpaque = false
-        panel.backgroundColor = .clear
-        panel.level = .floating
-        panel.collectionBehavior = .canJoinAllSpaces
+        appState.panel.isOpaque = false
+        appState.panel.backgroundColor = .clear
+        appState.panel.level = .floating
+        appState.panel.collectionBehavior = .canJoinAllSpaces
         if let screen = NSScreen.main {
             appState.screenWidth = screen.visibleFrame.width
             appState.screenHeight = screen.visibleFrame.height
@@ -98,7 +97,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let hostingController = NSHostingController(rootView: contentView)
         hostingController.view.wantsLayer = true
         hostingController.view.layer?.backgroundColor = NSColor.clear.cgColor
-        panel.contentViewController = hostingController
+        appState.panel.contentViewController = hostingController
+        appState.fetchRunningApps()
     }
     
     private func setupEventTap() {
@@ -144,14 +144,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         globalMouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved) { [weak self] event in
             guard let self = self else { return }
-            if self.panel.isVisible {
+            if self.appState.panel.isVisible {
                 appState.canHover = true
             }
         }
         
         localMouseMonitor = NSEvent.addLocalMonitorForEvents(matching: .mouseMoved) { [weak self] event in
             guard let self = self else { return event }
-            if self.panel.isVisible {
+            if self.appState.panel.isVisible {
                 appState.canHover = true
             }
             return event
@@ -163,7 +163,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
            let workItem = showPanelWorkItem,
            !workItem.isCancelled {
             showPanelWorkItem?.cancel()
-            if panel.isVisible {
+            if appState.panel.isVisible {
                 appState.canHover = false
             }
             switchSelectedAppToForeground()
@@ -234,7 +234,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             // Trigger panel show on main thread
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                if !self.panel.isVisible {
+                if !self.appState.panel.isVisible {
                     appState.fetchRunningApps()
                     appState.cycleSelection(reverse: isReverse)
                     self.scheduleShowPanel(reverse: isReverse)
@@ -243,7 +243,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
             }
             return nil
-        } else if self.panel.isVisible && flags.contains(CGEventFlags(rawValue: UInt64(shortcutModifierRaw))) {
+        } else if self.appState.panel.isVisible && flags.contains(CGEventFlags(rawValue: UInt64(shortcutModifierRaw))) {
             switch keyCode {
             case 124: // Checks for right arrow key
                 appState.cycleSelection()
@@ -259,7 +259,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func switchSelectedAppToForeground() {
-        self.panel.orderOut(nil)
+        self.appState.panel.orderOut(nil)
         let appToActivate = NSWorkspace
              .shared.runningApplications.first(where: { $0
                  .bundleIdentifier == appState.selectedAppId })
@@ -269,26 +269,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private func scheduleShowPanel(reverse: Bool = false) {
         showPanelWorkItem?.cancel()
         let workItem = DispatchWorkItem { [weak self] in
-            self?.showPanel()
+            self?.appState.showPanel()
             self?.appState.fetchRunningApps()
             self?.appState.cycleSelection(reverse: reverse)
         }
         showPanelWorkItem = workItem
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: workItem)
-    }
-    
-    func showPanel() {
-        if let screen = NSScreen.main {
-            let screenRect = screen.visibleFrame
-            let newSize = CGSize(width: appState.screenWidth, height: appState.screenHeight)
-            panel.setContentSize(newSize)
-
-            let newOriginX = (screenRect.width - newSize.width) / 2 + screenRect.origin.x
-            let newOriginY = (screenRect.height - newSize.height) / 2 + screenRect.origin.y
-
-            panel.setFrame(CGRect(origin: CGPoint(x: newOriginX, y: newOriginY), size: newSize), display: true)
-        }
-        panel.makeKeyAndOrderFront(nil)
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {

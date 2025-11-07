@@ -15,6 +15,7 @@ class AppState: ObservableObject {
     @Published var screenHeight: CGFloat = 0
     @Published var canHover: Bool = false
     @Published var isChoosingShortcut: Bool = false
+    @Published var panel: NSPanel!
 
     func fetchRunningApps() {
         let allRunnableApps = NSWorkspace.shared.runningApplications
@@ -65,5 +66,19 @@ class AppState: ObservableObject {
         else {
             self.selectedAppId = runningApps.first?.id
         }
+    }
+    
+    func showPanel() {
+        if let screen = NSScreen.main {
+            let screenRect = screen.visibleFrame
+            let newSize = CGSize(width: screenWidth, height: screenHeight)
+            panel.setContentSize(newSize)
+
+            let newOriginX = (screenRect.width - newSize.width) / 2 + screenRect.origin.x
+            let newOriginY = (screenRect.height - newSize.height) / 2 + screenRect.origin.y
+
+            panel.setFrame(CGRect(origin: CGPoint(x: newOriginX, y: newOriginY), size: newSize), display: true)
+        }
+        panel.makeKeyAndOrderFront(nil)
     }
 }
