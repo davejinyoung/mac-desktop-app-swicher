@@ -5,7 +5,7 @@ import CoreGraphics
 struct AppInfo: Identifiable, Equatable {
     let id: String
     let name: String
-    let icon: NSImage
+    let icon: NSImage	
 }
 
 class AppState: ObservableObject {
