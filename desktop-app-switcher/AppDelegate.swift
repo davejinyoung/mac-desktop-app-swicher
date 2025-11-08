@@ -245,6 +245,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return nil
         } else if self.appState.panel.isVisible && flags.contains(CGEventFlags(rawValue: UInt64(shortcutModifierRaw))) {
             switch keyCode {
+            case 12: // Checks for 'q' key
+                terminateSelectedApp()
             case 124: // Checks for right arrow key
                 appState.cycleSelection()
             case 123: // Checks for left arrow key
@@ -264,6 +266,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
              .shared.runningApplications.first(where: { $0
                  .bundleIdentifier == appState.selectedAppId })
         appToActivate?.activate(options: [.activateAllWindows])
+    }
+    
+    private func terminateSelectedApp() {
+        let appToTerminate = NSWorkspace
+             .shared.runningApplications.first(where: { $0
+                 .bundleIdentifier == appState.selectedAppId })
+        appToTerminate?.forceTerminate()
+        appState.fetchRunningApps()
     }
     
     private func scheduleShowPanel(reverse: Bool = false) {
