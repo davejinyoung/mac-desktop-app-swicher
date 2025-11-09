@@ -12,6 +12,13 @@ This application is designed to solve that problem.
 It limits the app switcher to only the applications that are running on your current desktop. 
 This helps you stay focused on your current context and switch between relevant apps more efficiently.
 
+### Features
+- Displays all running apps on the current desktop as a floating panel
+- Replicates native app cycling behaviour
+- Ability to customize the shortcut binding to your preferred modifier+key combo
+- Ability to update the size of the panel
+- Ability to quit a running app by clicking 'q' on the currently selected app on the panel
+
 ### Usage
 1. Clone the repository and open the project on Xcode.
 2. Navigate to the "Product" tab on the top bar and click "Archive".
