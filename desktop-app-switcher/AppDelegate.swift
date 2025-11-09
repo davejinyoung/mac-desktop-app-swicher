@@ -273,6 +273,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
              .shared.runningApplications.first(where: { $0
                  .bundleIdentifier == appState.selectedAppId })
         appToTerminate?.forceTerminate()
+        if let selectedAppId = appState.selectedAppId {
+            appState.runningApps.removeAll { $0.id == selectedAppId }
+        }
         appState.fetchRunningApps()
     }
     
