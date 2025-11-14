@@ -247,6 +247,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             switch keyCode {
             case 12: // Checks for 'q' key
                 terminateSelectedApp()
+            case 45: // Checks for 'n' key
+                openNewAppWindowInstance()
             case 124: // Checks for right arrow key
                 appState.cycleSelection()
             case 123: // Checks for left arrow key
@@ -269,14 +271,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func terminateSelectedApp() {
-        let appToTerminate = NSWorkspace
-             .shared.runningApplications.first(where: { $0
-                 .bundleIdentifier == appState.selectedAppId })
-        appToTerminate?.forceTerminate()
         if let selectedAppId = appState.selectedAppId {
             appState.runningApps.removeAll { $0.id == selectedAppId }
         }
-        appState.fetchRunningApps()
+        let appToTerminate = NSWorkspace
+             .shared.runningApplications.first(where: { $0
+                 .bundleIdentifier == appState.selectedAppId })
+        appToTerminate?.terminate()
+        appState.cycleSelection()
+    }
+    
+    private func openNewAppWindowInstance() {
+        let appToOpenNewWindown = NSWorkspace
+             .shared.runningApplications.first(where: { $0
+                 .bundleIdentifier == appState.selectedAppId })
+        let url = appToOpenNewWindown!.bundleURL
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.activates = true
+        configuration.createsNewApplicationInstance = true
+        NSWorkspace.shared.openApplication(at: url!, configuration: configuration, completionHandler: nil)
     }
     
     private func scheduleShowPanel(reverse: Bool = false) {
