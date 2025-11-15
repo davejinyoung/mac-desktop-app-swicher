@@ -17,7 +17,8 @@ This helps you stay focused on your current context and switch between relevant 
 - Replicates native app cycling behaviour
 - Ability to customize the shortcut binding to your preferred modifier+key combo
 - Ability to update the size of the panel
-- Ability to quit a running app by clicking 'q' on the currently selected app on the panel
+- Ability to quit a running app by clicking a customizable key on the currently selected app on the panel
+- Ability to open a new window of a running app by clicking a customizable key on the currently selected app on the panel
 
 ### Usage
 1. Clone the repository and open the project on Xcode.
