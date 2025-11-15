@@ -7,6 +7,8 @@ class SettingsStore: ObservableObject {
     private enum Keys {
         static let shortcutModifierRaw = "shortcutModifierRaw"
         static let shortcutKey = "shortcutKey"
+        static let quitAppKey = "quitAppKey"
+        static let newAppWindowKey = "newAppWindowKey"
         static let appIconSize = "appIconSizeKey"
     }
     
@@ -22,6 +24,18 @@ class SettingsStore: ObservableObject {
         }
     }
     
+    @Published var quitAppKey: Int {
+        didSet {
+            UserDefaults.standard.set(quitAppKey, forKey: "quitAppKey")
+        }
+    }
+    
+    @Published var newAppWindowKey: Int {
+        didSet {
+            UserDefaults.standard.set(newAppWindowKey, forKey: "newAppWindowKey")
+        }
+    }
+    
     @Published var appIconSize: CGFloat {
         didSet {
             UserDefaults.standard.set(appIconSize, forKey: Keys.appIconSize)
@@ -31,6 +45,8 @@ class SettingsStore: ObservableObject {
     private init() {
         self.shortcutModifierRaw = UserDefaults.standard.object(forKey: Keys.shortcutModifierRaw) as? Int ?? 524576 // Option modifier
         self.shortcutKey = UserDefaults.standard.object(forKey: Keys.shortcutKey) as? Int ?? 48 // Tab key
+        self.quitAppKey = UserDefaults.standard.object(forKey: "quitAppKey") as? Int ?? 12
+        self.newAppWindowKey = UserDefaults.standard.object(forKey: "newAppWindowKey") as? Int ?? 45
         self.appIconSize = UserDefaults.standard.object(forKey: Keys.appIconSize) as? CGFloat ?? 120
     }
 }

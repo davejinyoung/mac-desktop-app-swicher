@@ -33,8 +33,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let hostingController = NSHostingController(rootView: SettingsView().environmentObject(appState))
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 380, height: 220),
-            styleMask: [.titled, .closable, .utilityWindow],
+            contentRect: NSRect(x: 0, y: 0, width: 0, height: 0),
+            styleMask: [.titled, .closable, .utilityWindow, .resizable],
             backing: .buffered,
             defer: false
         )
@@ -245,9 +245,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return nil
         } else if self.appState.panel.isVisible && flags.contains(CGEventFlags(rawValue: UInt64(shortcutModifierRaw))) {
             switch keyCode {
-            case 12: // Checks for 'q' key
+            case Int64(SettingsStore.shared.quitAppKey): // Checks for the quit app key
                 terminateSelectedApp()
-            case 45: // Checks for 'n' key
+            case Int64(SettingsStore.shared.newAppWindowKey): // Checks for the new app window key
                 openNewAppWindowInstance()
             case 124: // Checks for right arrow key
                 appState.cycleSelection()
