@@ -5,7 +5,12 @@ import CoreGraphics
 struct AppInfo: Identifiable, Equatable {
     let id: String
     let name: String
-    let icon: NSImage	
+    let icon: NSImage
+}
+
+struct SettingsOptions: Equatable {
+    var isModifying: Bool
+    var modifyingProperty: String?
 }
 
 class AppState: ObservableObject {
@@ -15,7 +20,7 @@ class AppState: ObservableObject {
     @Published var screenWidth: CGFloat = 0
     @Published var screenHeight: CGFloat = 0
     @Published var canHover: Bool = false
-    @Published var isChoosingShortcut: Bool = false
+    @Published var settings: SettingsOptions = SettingsOptions(isModifying: false, modifyingProperty: nil)
     @Published var panel: NSPanel!
 
     func fetchRunningApps() {
@@ -81,5 +86,19 @@ class AppState: ObservableObject {
             panel.setFrame(CGRect(origin: CGPoint(x: newOriginX, y: newOriginY), size: newSize), display: true)
         }
         panel.makeKeyAndOrderFront(nil)
+    }
+    
+    func updateSettings(keyCode: Int, modifier: Int) {
+        switch self.settings.modifyingProperty {
+        case "cycle":
+            SettingsStore.shared.shortcutKey = keyCode
+            SettingsStore.shared.shortcutModifierRaw = modifier
+        case "quit":
+            SettingsStore.shared.quitAppKey = keyCode
+        case "new":
+            SettingsStore.shared.newAppWindowKey = keyCode
+        default:
+            break
+        }
     }
 }

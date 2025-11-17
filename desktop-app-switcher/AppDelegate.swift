@@ -222,10 +222,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let isReverse: Bool = flags.contains(.maskShift)
         
-        if appState.isChoosingShortcut {
-            SettingsStore.shared.shortcutModifierRaw = Int(flags.rawValue)
-            SettingsStore.shared.shortcutKey = Int(keyCode)
-            appState.isChoosingShortcut = false
+        if appState.settings.isModifying {
+            let keyCode = Int(keyCode)
+            let modifier = Int(flags.rawValue)
+            appState.updateSettings(keyCode: keyCode, modifier: modifier)
+            appState.settings.isModifying = false
             return nil
         }
         
