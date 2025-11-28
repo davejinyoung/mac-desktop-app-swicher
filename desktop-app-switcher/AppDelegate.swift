@@ -236,7 +236,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 if !self.appState.panel.isVisible {
-                    appState.fetchRunningApps()
                     appState.cycleSelection(reverse: isReverse)
                     self.scheduleShowPanel(reverse: isReverse)
                 } else {
@@ -269,6 +268,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
              .shared.runningApplications.first(where: { $0
                  .bundleIdentifier == appState.selectedAppId })
         appToActivate?.activate(options: [.activateAllWindows])
+        self.appState.updateRunningAppsListOrder()
     }
     
     private func terminateSelectedApp() {
@@ -297,8 +297,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         showPanelWorkItem?.cancel()
         let workItem = DispatchWorkItem { [weak self] in
             self?.appState.showPanel()
-            self?.appState.fetchRunningApps()
-            self?.appState.cycleSelection(reverse: reverse)
         }
         showPanelWorkItem = workItem
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: workItem)

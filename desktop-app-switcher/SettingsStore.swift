@@ -10,6 +10,7 @@ class SettingsStore: ObservableObject {
         static let quitAppKey = "quitAppKey"
         static let newAppWindowKey = "newAppWindowKey"
         static let appIconSize = "appIconSizeKey"
+        static let appsFromAllDeskops = "appsFromAllDeskops"
     }
     
     @Published var shortcutModifierRaw: Int {
@@ -36,6 +37,12 @@ class SettingsStore: ObservableObject {
         }
     }
     
+    @Published var appsFromAllDeskops: Bool {
+        didSet {
+            UserDefaults.standard.set(appsFromAllDeskops, forKey: "appsFromAllDeskops")
+        }
+    }
+    
     @Published var appIconSize: CGFloat {
         didSet {
             UserDefaults.standard.set(appIconSize, forKey: Keys.appIconSize)
@@ -47,6 +54,7 @@ class SettingsStore: ObservableObject {
         self.shortcutKey = UserDefaults.standard.object(forKey: Keys.shortcutKey) as? Int ?? 48 // Tab key
         self.quitAppKey = UserDefaults.standard.object(forKey: "quitAppKey") as? Int ?? 12
         self.newAppWindowKey = UserDefaults.standard.object(forKey: "newAppWindowKey") as? Int ?? 45
+        self.appsFromAllDeskops = UserDefaults.standard.object(forKey: "appsFromAllDeskops") as? Bool ?? false
         self.appIconSize = UserDefaults.standard.object(forKey: Keys.appIconSize) as? CGFloat ?? 120
     }
 }

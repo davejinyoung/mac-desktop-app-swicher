@@ -24,23 +24,27 @@ class AppState: ObservableObject {
     @Published var panel: NSPanel!
 
     func fetchRunningApps() {
+        let firstApp = NSWorkspace.shared.frontmostApplication
         let allRunnableApps = NSWorkspace.shared.runningApplications
             .filter { $0.activationPolicy == .regular }
         
         let appsByPID = Dictionary(uniqueKeysWithValues: allRunnableApps.map { ($0.processIdentifier, $0) })
         
-        guard let windowList = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? [[String: Any]] else {
+        let option: CGWindowListOption = SettingsStore.shared.appsFromAllDeskops ? .excludeDesktopElements : .optionOnScreenOnly
+        guard let windowList = CGWindowListCopyWindowInfo(option, kCGNullWindowID) as? [[String: Any]] else {
             return
         }
         
         var orderedPIDs: [pid_t] = []
+        orderedPIDs.append(firstApp!.processIdentifier)
         for window in windowList {
             if let pid = window[kCGWindowOwnerPID as String] as? pid_t {
-                if !orderedPIDs.contains(pid) {
+                if !orderedPIDs.contains(pid) && pid != firstApp!.processIdentifier {
                     orderedPIDs.append(pid)
                 }
             }
         }
+        
         let sortedApps = orderedPIDs.compactMap { pid -> AppInfo? in
             guard let app = appsByPID[pid],
                   let name = app.localizedName,
@@ -56,15 +60,17 @@ class AppState: ObservableObject {
     }
     
     func cycleSelection(reverse: Bool = false) {
+        if !panel.isVisible {
+            fetchRunningApps()
+        }
         print("running apps are: " + runningApps.map(\.self).map(\.name).joined(separator: ", "))
         guard !runningApps.isEmpty else {
             return
         }
         
-        if let selectedAppId = selectedAppId,
-           let curIndex = runningApps.firstIndex(where: { $0.id == selectedAppId })
+        if let curIndex = runningApps.firstIndex(where: { $0.id == selectedAppId })
         {
-            let indexOffset: Int = reverse ? -1 : 1
+            let indexOffset = reverse ? -1 : 1
             var nextIndex = (curIndex + indexOffset) % runningApps.count
             nextIndex = (nextIndex % runningApps.count + runningApps.count) % runningApps.count
             self.selectedAppId = runningApps[nextIndex].id
@@ -72,6 +78,13 @@ class AppState: ObservableObject {
         else {
             self.selectedAppId = runningApps.first?.id
         }
+    }
+    
+    func updateRunningAppsListOrder() {
+        let curIndex = runningApps.firstIndex(where: { $0.id == selectedAppId }) ?? 0
+        let selectedApp = runningApps.remove(at: curIndex)
+        self.selectedAppId = selectedApp.id
+        runningApps.insert(selectedApp, at: 0)
     }
     
     func showPanel() {

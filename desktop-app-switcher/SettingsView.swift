@@ -89,7 +89,14 @@ struct SettingsView: View {
             .environmentObject(appState)
             
             HStack {
-                Text("Panel size:")
+                Text("Show Apps from All Desktops")
+                Spacer()
+                Toggle(isOn: $settings.appsFromAllDeskops) {}
+                .toggleStyle(.switch)
+            }
+            
+            HStack {
+                Text("Panel Size:")
                 Spacer()
                 Slider(
                     value: $appState.appIconSize,
@@ -105,7 +112,7 @@ struct SettingsView: View {
             }
         }
         .padding(32)
-        .frame(minWidth: 320, maxWidth: .infinity, minHeight: 220, maxHeight: .infinity, alignment: .top)
+        .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 }
 
