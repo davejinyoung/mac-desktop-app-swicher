@@ -264,33 +264,41 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private func switchSelectedAppToForeground() {
         self.appState.panel.orderOut(nil)
-        let appToActivate = NSWorkspace
-             .shared.runningApplications.first(where: { $0
-                 .bundleIdentifier == appState.selectedAppId })
-        appToActivate?.activate(options: [.activateAllWindows])
-        self.appState.updateRunningAppsListOrder()
+        
+        // Use the integrated switchToSelectedWindow method with completion
+        self.appState.switchToSelectedWindow(completion: { [weak self] in
+            self?.appState.updateRunningAppsListOrder()
+        })
     }
-    
+
     private func terminateSelectedApp() {
-        if let selectedAppId = appState.selectedAppId {
-            appState.runningApps.removeAll { $0.id == selectedAppId }
+        guard let selectedAppId = appState.selectedAppId,
+              let appToTerminate = appState.runningApps.first(where: { $0.id == selectedAppId }) else {
+            return
         }
-        let appToTerminate = NSWorkspace
-             .shared.runningApplications.first(where: { $0
-                 .bundleIdentifier == appState.selectedAppId })
-        appToTerminate?.terminate()
+        
+        // Cycle to next app before terminating
         appState.cycleSelection()
+        
+        // Remove from list
+        appState.runningApps.removeAll { $0.id == selectedAppId }
+        
+        // Terminate the app asynchronously
+        DispatchQueue.global(qos: .background).async {
+            appToTerminate.app.terminate()
+        }
     }
     
     private func openNewAppWindowInstance() {
-        let appToOpenNewWindown = NSWorkspace
-             .shared.runningApplications.first(where: { $0
-                 .bundleIdentifier == appState.selectedAppId })
-        let url = appToOpenNewWindown!.bundleURL
-        let configuration = NSWorkspace.OpenConfiguration()
-        configuration.activates = true
-        configuration.createsNewApplicationInstance = true
-        NSWorkspace.shared.openApplication(at: url!, configuration: configuration, completionHandler: nil)
+//        let appToOpenNewWindown = NSWorkspace
+//             .shared.runningApplications.first(where: { $0
+//                 .bundleIdentifier == appState.selectedAppId })
+//        let url = appToOpenNewWindown!.bundleURL
+//        let configuration = NSWorkspace.OpenConfiguration()
+//        configuration.activates = true
+//        configuration.createsNewApplicationInstance = true
+//        NSWorkspace.shared.openApplication(at: url!, configuration: configuration, completionHandler: nil)
+        
     }
     
     private func scheduleShowPanel(reverse: Bool = false) {
@@ -324,4 +332,3 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 }
-

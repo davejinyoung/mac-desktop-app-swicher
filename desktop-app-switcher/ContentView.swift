@@ -21,7 +21,7 @@ struct VisualEffectView: NSViewRepresentable {
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
-    @State private var selectedAppId: String?
+    @State private var selectedAppId: CGWindowID?
 
     var body: some View {
         HStack {
@@ -50,7 +50,7 @@ struct ContentView: View {
                                 .offset(y: 18)
                         }
                 }
-                .onHover { hover in // The onHover now wraps the whole item
+                .onHover { hover in
                     if hover && appState.canHover {
                         appState.selectedAppId = app.id
                     }
