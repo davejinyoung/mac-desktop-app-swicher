@@ -1,3 +1,4 @@
+import CoreGraphics
 import AppKit
 import SwiftUI
 import Carbon
@@ -200,6 +201,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
+    private func missionControlActive() -> Bool {
+        let windowList = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as! [[String: Any]]
+        for window in windowList {
+            if (window["kCGWindowOwnerName"] as? String) == "Dock",
+                let windowOwnerPID = window["kCGWindowOwnerPID"] as? pid_t,
+                let app = NSRunningApplication(processIdentifier: windowOwnerPID),
+                app.bundleIdentifier == "com.apple.dock",
+                window["kCGWindowName"] == nil
+            {
+                return true
+            }
+        }
+        return false
+    }
+    
     private func handleKeyEvent(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
         let shortcutModifierRaw: Int = SettingsStore.shared.shortcutModifierRaw
         let shortcutKey: Int = SettingsStore.shared.shortcutKey
@@ -231,32 +247,34 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         // Check for Option+Tab (keyCode 48 = Tab)
-        if keyCode == shortcutKey && (flags.contains(CGEventFlags(rawValue: UInt64(shortcutModifierRaw)))) {
-            // Trigger panel show on main thread
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                if !self.appState.panel.isVisible {
-                    appState.cycleSelection(reverse: isReverse)
-                    self.scheduleShowPanel(reverse: isReverse)
-                } else {
-                    appState.cycleSelection(reverse: isReverse)
+        if !missionControlActive() {
+            if keyCode == shortcutKey && (flags.contains(CGEventFlags(rawValue: UInt64(shortcutModifierRaw)))) {
+                // Trigger panel show on main thread
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    if !self.appState.panel.isVisible {
+                        appState.cycleSelection(reverse: isReverse)
+                        self.scheduleShowPanel(reverse: isReverse)
+                    } else {
+                        appState.cycleSelection(reverse: isReverse)
+                    }
                 }
+                return nil
+            } else if self.appState.panel.isVisible && flags.contains(CGEventFlags(rawValue: UInt64(shortcutModifierRaw))) {
+                switch keyCode {
+                case Int64(SettingsStore.shared.quitAppKey): // Checks for the quit app key
+                    terminateSelectedApp()
+                case Int64(SettingsStore.shared.newAppWindowKey): // Checks for the new app window key
+                    openNewAppWindowInstance()
+                case 124: // Checks for right arrow key
+                    appState.cycleSelection()
+                case 123: // Checks for left arrow key
+                    appState.cycleSelection(reverse: true)
+                default:
+                    break
+                }
+                return nil
             }
-            return nil
-        } else if self.appState.panel.isVisible && flags.contains(CGEventFlags(rawValue: UInt64(shortcutModifierRaw))) {
-            switch keyCode {
-            case Int64(SettingsStore.shared.quitAppKey): // Checks for the quit app key
-                terminateSelectedApp()
-            case Int64(SettingsStore.shared.newAppWindowKey): // Checks for the new app window key
-                openNewAppWindowInstance()
-            case 124: // Checks for right arrow key
-                appState.cycleSelection()
-            case 123: // Checks for left arrow key
-                appState.cycleSelection(reverse: true)
-            default:
-                break
-            }
-            return nil
         }
         
         return Unmanaged.passRetained(event)
