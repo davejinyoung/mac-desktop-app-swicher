@@ -4,8 +4,6 @@ import SwiftUI
 import Carbon
 
 class AppDelegate: NSObject, NSApplicationDelegate {
-
-    private var statusItem: NSStatusItem?
     private let appState = AppState()
     private var globalFlagsMonitor: Any?
     private var localFlagsMonitor: Any?
@@ -13,68 +11,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var localMouseMonitor: Any?
     private var eventTap: CFMachPort?
     private var showPanelWorkItem: DispatchWorkItem?
-    private var settingsWindow: NSWindow? = nil
+    
+    private var settingsController: SettingsController?
+    private var menuController: MenuController?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         if !checkAccessibilityPermissions() {
             requestAccessibilityPermissions()
             return
         }
-        createMenu()
+        self.menuController = .init(appState: appState)
         setupPanel()
         setupEventTap()
         setupFlagsMonitor()
-    }
-    
-    @objc private func openSettings() {
-        if let window = settingsWindow {
-            window.makeKeyAndOrderFront(nil)
-            NSApp.activate(ignoringOtherApps: true)
-            return
-        }
-        let hostingController = NSHostingController(rootView: SettingsView().environmentObject(appState))
-        let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 0, height: 0),
-            styleMask: [.titled, .closable, .utilityWindow, .resizable],
-            backing: .buffered,
-            defer: false
-        )
-        window.title = "Settings"
-        window.isReleasedWhenClosed = false
-        if let screen = NSScreen.main {
-            let screenFrame = screen.visibleFrame
-            let windowSize = window.frame.size
-            let x = screenFrame.origin.x + (screenFrame.size.width  - windowSize.width)  / 2
-            let y = screenFrame.origin.y + (screenFrame.size.height - windowSize.height) / 2
-            window.setFrameOrigin(NSPoint(x: x, y: y))
-        }
-        window.contentViewController = hostingController
-        window.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
-        
-        NotificationCenter.default.addObserver(forName: NSWindow.willCloseNotification, object: window, queue: .main) { [weak self] _ in
-            self?.settingsWindow = nil
-        }
-        settingsWindow = window
-    }
-    
-    private func createMenu() {
-        let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-        if let button = statusItem.button {
-            if #available(macOS 11.0, *) {
-                button.image = NSImage(systemSymbolName: "arrow.right.arrow.left", accessibilityDescription: "Desktop App Switcher")
-            } else {
-                button.image = NSImage(named: NSImage.actionTemplateName)
-            }
-        }
-        let statusMenu = NSMenu()
-        let displayName = (Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String)
-        
-        statusMenu.addItem(withTitle: "Settings", action: #selector(openSettings), keyEquivalent: ",")
-        statusMenu.addItem(NSMenuItem.separator())
-        statusMenu.addItem(withTitle: "Quit \(displayName!)", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
-        statusItem.menu = statusMenu
-        self.statusItem = statusItem
     }
     
     private func setupPanel() {
