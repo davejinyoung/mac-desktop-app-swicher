@@ -96,6 +96,13 @@ struct SettingsView: View {
             }
             
             HStack {
+                Text("Allow Continuous App Cycling")
+                Spacer()
+                Toggle(isOn: $settings.continuousCycling) {}
+                .toggleStyle(.switch)
+            }
+            
+            HStack {
                 Text("Panel Size:")
                 Spacer()
                 Slider(

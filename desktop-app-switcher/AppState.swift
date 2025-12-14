@@ -59,7 +59,7 @@ class AppState: ObservableObject {
         self.selectedAppId = self.runningApps.first?.id
     }
     
-    func cycleSelection(reverse: Bool = false) {
+    func cycleSelection(reverse: Bool = false, ) {
         if !panel.isVisible {
             fetchRunningApps()
         }
@@ -78,6 +78,14 @@ class AppState: ObservableObject {
         else {
             self.selectedAppId = runningApps.first?.id
         }
+    }
+    
+    func isLastApp() -> Bool {
+        return runningApps.last?.id == selectedAppId
+    }
+    
+    func isFirstApp() -> Bool {
+        return runningApps.first?.id == selectedAppId
     }
     
     func updateRunningAppsListOrder() {

@@ -74,7 +74,13 @@ class EventController {
                     if !appState.panel.isVisible {
                         appState.cycleSelection(reverse: isReverse)
                         scheduleShowPanel(reverse: isReverse)
-                    } else {
+                    } else { // Panel is already displayed
+                        // Logic to check if apps should auto cycle or not
+                        let keyHold = event.getIntegerValueField(.keyboardEventAutorepeat) != 0
+                        guard !(keyHold &&
+                                (((appState.isLastApp() && !isReverse) || (appState.isFirstApp() && isReverse))
+                                 && !SettingsStore.shared.continuousCycling)
+                        ) else { return }
                         appState.cycleSelection(reverse: isReverse)
                     }
                 }

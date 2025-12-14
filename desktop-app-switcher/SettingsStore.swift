@@ -11,6 +11,7 @@ class SettingsStore: ObservableObject {
         static let newAppWindowKey = "newAppWindowKey"
         static let appIconSize = "appIconSizeKey"
         static let appsFromAllDeskops = "appsFromAllDeskops"
+        static let continuousCycling = "continuousCycling"
     }
     
     @Published var shortcutModifierRaw: Int {
@@ -43,6 +44,12 @@ class SettingsStore: ObservableObject {
         }
     }
     
+    @Published var continuousCycling: Bool {
+        didSet {
+            UserDefaults.standard.set(continuousCycling, forKey: "continuousCycling")
+        }
+    }
+    
     @Published var appIconSize: CGFloat {
         didSet {
             UserDefaults.standard.set(appIconSize, forKey: Keys.appIconSize)
@@ -55,6 +62,7 @@ class SettingsStore: ObservableObject {
         self.quitAppKey = UserDefaults.standard.object(forKey: "quitAppKey") as? Int ?? 12 // Q key
         self.newAppWindowKey = UserDefaults.standard.object(forKey: "newAppWindowKey") as? Int ?? 45 // N key
         self.appsFromAllDeskops = UserDefaults.standard.object(forKey: "appsFromAllDeskops") as? Bool ?? false
+        self.continuousCycling = UserDefaults.standard.object(forKey: "continuousCycling") as? Bool ?? false
         self.appIconSize = UserDefaults.standard.object(forKey: Keys.appIconSize) as? CGFloat ?? 120
     }
 }
