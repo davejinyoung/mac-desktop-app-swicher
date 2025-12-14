@@ -52,8 +52,8 @@ class SettingsStore: ObservableObject {
     private init() {
         self.shortcutModifierRaw = UserDefaults.standard.object(forKey: Keys.shortcutModifierRaw) as? Int ?? 524576 // Option modifier
         self.shortcutKey = UserDefaults.standard.object(forKey: Keys.shortcutKey) as? Int ?? 48 // Tab key
-        self.quitAppKey = UserDefaults.standard.object(forKey: "quitAppKey") as? Int ?? 12
-        self.newAppWindowKey = UserDefaults.standard.object(forKey: "newAppWindowKey") as? Int ?? 45
+        self.quitAppKey = UserDefaults.standard.object(forKey: "quitAppKey") as? Int ?? 12 // Q key
+        self.newAppWindowKey = UserDefaults.standard.object(forKey: "newAppWindowKey") as? Int ?? 45 // N key
         self.appsFromAllDeskops = UserDefaults.standard.object(forKey: "appsFromAllDeskops") as? Bool ?? false
         self.appIconSize = UserDefaults.standard.object(forKey: Keys.appIconSize) as? CGFloat ?? 120
     }

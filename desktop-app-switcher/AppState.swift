@@ -113,5 +113,6 @@ class AppState: ObservableObject {
         default:
             break
         }
+        settings.isModifying = false
     }
 }
