@@ -12,6 +12,7 @@ class SettingsStore: ObservableObject {
         static let appIconSize = "appIconSizeKey"
         static let appsFromAllDeskops = "appsFromAllDeskops"
         static let continuousCycling = "continuousCycling"
+        static let previewWindows = "previewWindows"
     }
     
     @Published var shortcutModifierRaw: Int {
@@ -28,25 +29,31 @@ class SettingsStore: ObservableObject {
     
     @Published var quitAppKey: Int {
         didSet {
-            UserDefaults.standard.set(quitAppKey, forKey: "quitAppKey")
+            UserDefaults.standard.set(quitAppKey, forKey: Keys.quitAppKey)
         }
     }
     
     @Published var newAppWindowKey: Int {
         didSet {
-            UserDefaults.standard.set(newAppWindowKey, forKey: "newAppWindowKey")
+            UserDefaults.standard.set(newAppWindowKey, forKey: Keys.newAppWindowKey)
         }
     }
     
     @Published var appsFromAllDeskops: Bool {
         didSet {
-            UserDefaults.standard.set(appsFromAllDeskops, forKey: "appsFromAllDeskops")
+            UserDefaults.standard.set(appsFromAllDeskops, forKey: Keys.appsFromAllDeskops)
         }
     }
     
     @Published var continuousCycling: Bool {
         didSet {
-            UserDefaults.standard.set(continuousCycling, forKey: "continuousCycling")
+            UserDefaults.standard.set(continuousCycling, forKey: Keys.continuousCycling)
+        }
+    }
+    
+    @Published var previewWindows: Bool {
+        didSet {
+            UserDefaults.standard.set(previewWindows, forKey: Keys.previewWindows)
         }
     }
     
@@ -59,10 +66,11 @@ class SettingsStore: ObservableObject {
     private init() {
         self.shortcutModifierRaw = UserDefaults.standard.object(forKey: Keys.shortcutModifierRaw) as? Int ?? 524576 // Option modifier
         self.shortcutKey = UserDefaults.standard.object(forKey: Keys.shortcutKey) as? Int ?? 48 // Tab key
-        self.quitAppKey = UserDefaults.standard.object(forKey: "quitAppKey") as? Int ?? 12 // Q key
-        self.newAppWindowKey = UserDefaults.standard.object(forKey: "newAppWindowKey") as? Int ?? 45 // N key
-        self.appsFromAllDeskops = UserDefaults.standard.object(forKey: "appsFromAllDeskops") as? Bool ?? false
-        self.continuousCycling = UserDefaults.standard.object(forKey: "continuousCycling") as? Bool ?? false
+        self.quitAppKey = UserDefaults.standard.object(forKey: Keys.quitAppKey) as? Int ?? 12 // Q key
+        self.newAppWindowKey = UserDefaults.standard.object(forKey: Keys.newAppWindowKey) as? Int ?? 45 // N key
+        self.appsFromAllDeskops = UserDefaults.standard.object(forKey: Keys.appsFromAllDeskops) as? Bool ?? false
+        self.continuousCycling = UserDefaults.standard.object(forKey: Keys.continuousCycling) as? Bool ?? false
+        self.previewWindows = UserDefaults.standard.object(forKey: Keys.previewWindows) as? Bool ?? false
         self.appIconSize = UserDefaults.standard.object(forKey: Keys.appIconSize) as? CGFloat ?? 120
     }
 }

@@ -18,9 +18,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         setupPanel()
+        setupFlagsMonitor()
         self.menuController = .init(appState: appState)
         self.eventController = .init(appState: appState)
-        setupFlagsMonitor()
     }
     
     private func setupPanel() {
@@ -84,7 +84,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if appState.panel.isVisible {
                 appState.canHover = false
             }
-            switchSelectedAppToForeground()
+            self.appState.panel.orderOut(nil)
+            self.appState.switchSelectedAppToForeground()
+            self.appState.updateRunningAppsListOrder()
             return true
         }
         return false
@@ -116,15 +118,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             NSApplication.shared.terminate(self)
         }
-    }
-    
-    private func switchSelectedAppToForeground() {
-        self.appState.panel.orderOut(nil)
-        let appToActivate = NSWorkspace
-             .shared.runningApplications.first(where: { $0
-                 .bundleIdentifier == appState.selectedAppId })
-        appToActivate?.activate(options: [.activateAllWindows])
-        self.appState.updateRunningAppsListOrder()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {

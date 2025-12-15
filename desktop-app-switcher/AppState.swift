@@ -78,6 +78,16 @@ class AppState: ObservableObject {
         else {
             self.selectedAppId = runningApps.first?.id
         }
+        if SettingsStore.shared.previewWindows {
+            switchSelectedAppToForeground()
+        }
+    }
+    
+    func switchSelectedAppToForeground() {
+        let appToActivate = NSWorkspace
+             .shared.runningApplications.first(where: { $0
+                 .bundleIdentifier == selectedAppId })
+        appToActivate?.activate(options: [.activateAllWindows])
     }
     
     func isLastApp() -> Bool {

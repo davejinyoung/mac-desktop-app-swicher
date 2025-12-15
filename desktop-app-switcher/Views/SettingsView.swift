@@ -103,6 +103,13 @@ struct SettingsView: View {
             }
             
             HStack {
+                Text("Preview Windows when Cycling Apps")
+                Spacer()
+                Toggle(isOn: $settings.previewWindows) {}
+                .toggleStyle(.switch)
+            }
+            
+            HStack {
                 Text("Panel Size:")
                 Spacer()
                 Slider(
