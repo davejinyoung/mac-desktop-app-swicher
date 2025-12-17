@@ -125,7 +125,9 @@ class EventController {
                 let windowOwnerPID = window["kCGWindowOwnerPID"] as? pid_t,
                 let app = NSRunningApplication(processIdentifier: windowOwnerPID),
                 app.bundleIdentifier == "com.apple.dock",
-                window["kCGWindowName"] == nil
+                window["kCGWindowName"] == nil,
+                let layer = window[kCGWindowLayer as String] as? Int,
+                layer > 1
             {
                 return true
             }
