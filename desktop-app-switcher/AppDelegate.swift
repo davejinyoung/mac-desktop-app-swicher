@@ -45,7 +45,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         hostingController.view.wantsLayer = true
         hostingController.view.layer?.backgroundColor = NSColor.clear.cgColor
         appState.panel.contentViewController = hostingController
-        appState.fetchRunningApps()
+        Task {
+            await appState.fetchRunningApps()
+        }
     }
     
     private func setupFlagsMonitor() {
