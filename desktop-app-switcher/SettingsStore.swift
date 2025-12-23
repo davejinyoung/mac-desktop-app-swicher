@@ -13,6 +13,7 @@ class SettingsStore: ObservableObject {
         static let appsFromAllDeskops = "appsFromAllDeskops"
         static let continuousCycling = "continuousCycling"
         static let previewWindows = "previewWindows"
+        static let switchWindowsWhileCycling = "switchWindowsWhileCycling"
     }
     
     @Published var shortcutModifierRaw: Int {
@@ -57,6 +58,12 @@ class SettingsStore: ObservableObject {
         }
     }
     
+    @Published var switchWindowsWhileCycling: Bool {
+        didSet {
+            UserDefaults.standard.set(switchWindowsWhileCycling, forKey: Keys.switchWindowsWhileCycling)
+        }
+    }
+    
     @Published var appIconSize: CGFloat {
         didSet {
             UserDefaults.standard.set(appIconSize, forKey: Keys.appIconSize)
@@ -71,6 +78,7 @@ class SettingsStore: ObservableObject {
         self.appsFromAllDeskops = UserDefaults.standard.object(forKey: Keys.appsFromAllDeskops) as? Bool ?? false
         self.continuousCycling = UserDefaults.standard.object(forKey: Keys.continuousCycling) as? Bool ?? false
         self.previewWindows = UserDefaults.standard.object(forKey: Keys.previewWindows) as? Bool ?? false
+        self.switchWindowsWhileCycling = UserDefaults.standard.object(forKey: Keys.switchWindowsWhileCycling) as? Bool ?? false
         self.appIconSize = UserDefaults.standard.object(forKey: Keys.appIconSize) as? CGFloat ?? 120
     }
 }

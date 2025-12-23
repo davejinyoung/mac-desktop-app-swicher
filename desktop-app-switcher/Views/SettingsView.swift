@@ -103,7 +103,14 @@ struct SettingsView: View {
             }
             
             HStack {
-                Text("Preview Windows when Cycling Apps")
+                Text("Switch Windows when Cycling Apps")
+                Spacer()
+                Toggle(isOn: $settings.switchWindowsWhileCycling) {}
+                .toggleStyle(.switch)
+            }
+            
+            HStack {
+                Text("Preview Windows on Panel")
                 Spacer()
                 Toggle(isOn: $settings.previewWindows) {}
                 .toggleStyle(.switch)

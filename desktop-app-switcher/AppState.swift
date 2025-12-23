@@ -44,9 +44,6 @@ class AppState: ObservableObject {
             return
         }
         
-        let content = try? await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
-        guard let windows = content?.windows else { return }
-        
         var orderedWindows = OrderedDictionary<CGWindowID, pid_t>()
         for window in windowList {
             if let pid = window[kCGWindowOwnerPID as String] as? pid_t,
@@ -54,6 +51,9 @@ class AppState: ObservableObject {
                 orderedWindows[windowId] = pid
             }
         }
+        
+        let content = try? await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+        guard let windows = content?.windows else { return }
         
         // Create apps immediately with placeholder icons
         let sortedApps = orderedWindows.keys.compactMap { winID -> AppInfo? in
@@ -69,7 +69,11 @@ class AppState: ObservableObject {
                 return nil
             }
             appsByPID.removeValue(forKey: pid)
-            return AppInfo(id: id, winID: window.windowID, name: name, icon: app.icon!)
+            var preview = app.icon
+            if (SettingsStore.shared.previewWindows) {
+                preview = self.runningApps.first(where: {$0.winID == winID})?.icon ?? preview
+            }
+            return AppInfo(id: id, winID: window.windowID, name: name, icon: preview!)
         }
         
         await MainActor.run {
@@ -80,7 +84,9 @@ class AppState: ObservableObject {
         }
         
         // Get previews asynchronously in background
-        getWindowPreviews(sortedApps: sortedApps, windows: windows)
+        if (SettingsStore.shared.previewWindows) {
+            getWindowPreviews(sortedApps: sortedApps, windows: windows)
+        }
     }
     
     func getWindowPreviews(sortedApps: [AppInfo], windows: [SCWindow]) {
@@ -147,7 +153,7 @@ class AppState: ObservableObject {
             self.selectedAppId = runningApps.first?.id
         }
         
-        if SettingsStore.shared.previewWindows {
+        if SettingsStore.shared.switchWindowsWhileCycling {
             switchSelectedAppToForeground()
         }
     }

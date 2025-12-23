@@ -72,8 +72,8 @@ class EventController {
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
                     if !appState.panel.isVisible {
+                        scheduleShowPanel()
                         appState.cycleSelection(reverse: isReverse)
-                        scheduleShowPanel(reverse: isReverse)
                     } else { // Panel is already displayed
                         // Logic to check if apps should auto cycle or not
                         let keyHold = event.getIntegerValueField(.keyboardEventAutorepeat) != 0
@@ -109,13 +109,13 @@ class EventController {
         }
     }
     
-    private func scheduleShowPanel(reverse: Bool = false) {
+    private func scheduleShowPanel() {
         showPanelWorkItem?.cancel()
         let workItem = DispatchWorkItem { [weak self] in
             self?.appState.showPanel()
         }
         showPanelWorkItem = workItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: workItem)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15, execute: workItem)
     }
     
     private func missionControlActive() -> Bool {
