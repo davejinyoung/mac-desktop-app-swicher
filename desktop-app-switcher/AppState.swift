@@ -6,7 +6,7 @@ import CoreGraphics
 
 struct AppInfo: Identifiable, Equatable {
     let id: String
-    let winID: CGWindowID
+    let window: SCWindow
     let name: String
     let icon: NSImage
 }
@@ -29,8 +29,7 @@ class AppState: ObservableObject {
     func fetchRunningApps() async {
         let allRunnableApps = NSWorkspace.shared.runningApplications
             .filter { $0.activationPolicy == .regular }
-        
-        var appsByPID = Dictionary(uniqueKeysWithValues: allRunnableApps.map { ($0.processIdentifier, $0) })
+        let appsByPID = Dictionary(uniqueKeysWithValues: allRunnableApps.map { ($0.processIdentifier, $0) })
         
         let option: CGWindowListOption = SettingsStore.shared.appsFromAllDeskops ? .excludeDesktopElements : .optionOnScreenOnly
         guard let windowList = CGWindowListCopyWindowInfo(option, kCGNullWindowID) as? [[String: Any]] else {
@@ -46,26 +45,14 @@ class AppState: ObservableObject {
         }
         
         let content = try? await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
-        guard let windows = content?.windows else { return }
+        guard let allUnorderedWindows = content?.windows else { return }
         
         // Create apps immediately with placeholder icons
-        let sortedApps = orderedWindows.keys.compactMap { winID -> AppInfo? in
-            let pid = orderedWindows[winID]!
-            guard let app = appsByPID[pid],
-                  let window = windows.first(where: { $0.windowID == winID }),
-                  window.frame.width > 50,
-                  window.frame.height > 50,
-                  let name = app.localizedName,
-                  let id = app.bundleIdentifier else {
-                return nil
-            }
-            appsByPID.removeValue(forKey: pid)
-            var preview = app.icon
-            if (SettingsStore.shared.previewWindows) {
-                preview = self.runningApps.first(where: {$0.winID == winID})?.icon ?? preview
-            }
-            return AppInfo(id: id, winID: window.windowID, name: name, icon: preview!)
-        }
+        let sortedApps = matchAppsWithWindows(
+            appsByPID: appsByPID,
+            orderedWindows: orderedWindows,
+            allUnorderedWindows: allUnorderedWindows
+        )
         
         await MainActor.run {
             self.runningApps = sortedApps
@@ -74,27 +61,57 @@ class AppState: ObservableObject {
             }
         }
         
-        // Get window previews asynchronously in background
+        // Get window previews asynchronously in non-main thread
         if (SettingsStore.shared.previewWindows) {
-            getWindowPreviews(sortedApps: sortedApps, windows: windows)
+            getWindowThumbnails(sortedApps: sortedApps)
         }
     }
     
-    func getWindowPreviews(sortedApps: [AppInfo], windows: [SCWindow]) {
-        for (index, appInfo) in sortedApps.enumerated() {
-            guard let window = windows.first(where: { $0.windowID == appInfo.winID }) else { continue }
-            
+    // Matches app windows from CGWindowListCopyWindowInfo to windows from SCShareableContent
+    func matchAppsWithWindows(
+        appsByPID: [pid_t : NSRunningApplication],
+        orderedWindows: OrderedDictionary<CGWindowID, pid_t>,
+        allUnorderedWindows: [SCWindow]
+    ) -> [AppInfo] {
+        var apps: [pid_t] = []
+        let sortedApps = orderedWindows.keys.compactMap { winID -> AppInfo? in
+            let pid = orderedWindows[winID]!
+            guard let app = appsByPID[pid],
+                  let window = allUnorderedWindows.first(where: { $0.windowID == winID }),
+                  window.isOnScreen,
+                  window.frame.width > 50,
+                  window.frame.height > 50,
+                  window.windowLayer == 0,
+                  let name = app.localizedName,
+                  let id = app.bundleIdentifier else {
+                return nil
+            }
+            // Choose the first window instance of the app and ignore the rest
+            if apps.contains(pid) { return nil }
+            apps.append(pid)
+            var preview = app.icon
+            if (SettingsStore.shared.previewWindows) {
+                preview = self.runningApps.first(where: {$0.window.windowID == winID})?.icon ?? preview
+            }
+            return AppInfo(id: id, window: window, name: name, icon: preview!)
+        }
+        return sortedApps
+    }
+    
+    func getWindowThumbnails(sortedApps: [AppInfo]) {
+        for (index, app) in sortedApps.enumerated() {
             Task {
-                if let preview = try? await captureWindow(window) {
+                if let windowThumbnail = try? await captureWindow(app.window) {
                     await MainActor.run {
-                        if self.runningApps[index].winID == appInfo.winID {
-                            let title = (window.title?.isEmpty == false) ? window.title! : appInfo.name
-                            self.runningApps[index] = AppInfo(
-                                id: appInfo.id,
-                                winID: appInfo.winID,
+                        if self.runningApps[index].window.windowID == app.window.windowID {
+                            let title = app.window.title?.isEmpty == false ? app.window.title! : app.name
+                            let appInfo = AppInfo(
+                                id: app.id,
+                                window: app.window,
                                 name: title,
-                                icon: preview
+                                icon: windowThumbnail
                             )
+                            self.runningApps[index] = appInfo
                         }
                     }
                 }
