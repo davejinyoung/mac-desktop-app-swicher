@@ -11,13 +11,6 @@ struct AppInfo: Identifiable, Equatable {
     let icon: NSImage
 }
 
-struct WindowInfo: Equatable {
-    let winID: CGWindowID
-    let title: String
-    let appName: String
-    let preview: NSImage?
-}
-
 struct SettingsOptions: Equatable {
     var isModifying: Bool
     var modifyingProperty: String?
@@ -60,8 +53,6 @@ class AppState: ObservableObject {
             let pid = orderedWindows[winID]!
             guard let app = appsByPID[pid],
                   let window = windows.first(where: { $0.windowID == winID }),
-                  let title = window.title,
-                  !title.isEmpty,
                   window.frame.width > 50,
                   window.frame.height > 50,
                   let name = app.localizedName,
@@ -83,7 +74,7 @@ class AppState: ObservableObject {
             }
         }
         
-        // Get previews asynchronously in background
+        // Get window previews asynchronously in background
         if (SettingsStore.shared.previewWindows) {
             getWindowPreviews(sortedApps: sortedApps, windows: windows)
         }
@@ -97,11 +88,11 @@ class AppState: ObservableObject {
                 if let preview = try? await captureWindow(window) {
                     await MainActor.run {
                         if self.runningApps[index].winID == appInfo.winID {
-                            let title = window.title
+                            let title = (window.title?.isEmpty == false) ? window.title! : appInfo.name
                             self.runningApps[index] = AppInfo(
                                 id: appInfo.id,
                                 winID: appInfo.winID,
-                                name: title!,
+                                name: title,
                                 icon: preview
                             )
                         }

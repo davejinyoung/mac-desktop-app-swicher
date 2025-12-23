@@ -13,11 +13,10 @@ struct AppWindowPanelView: View {
                         Image(nsImage: app.icon)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .clipShape(RoundedRectangle(cornerRadius: appState.appIconSize * 0.2, style: .continuous))
                             .background(
                                 Group {
                                     if selectedAppId == app.id {
-                                        RoundedRectangle(cornerRadius: appState.appIconSize * 0.2, style: .continuous)
+                                        RoundedRectangle(cornerRadius: 8, style: .continuous)
                                             .fill(Color.gray.opacity(0.7))
                                     }
                                 }
@@ -39,7 +38,7 @@ struct AppWindowPanelView: View {
                 }
             }
             .padding(25)
-            .glassEffect(.clear, in: .rect(cornerRadius: 50))
+            .glassEffect(.clear, in: .rect(cornerRadius: 15))
             .frame(width: appState.screenWidth - 80, height: appState.screenHeight)
             .onChange(of: appState.selectedAppId) {
                 selectedAppId = appState.selectedAppId

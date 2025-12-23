@@ -127,8 +127,11 @@ struct SettingsView: View {
                     }
                 )
                 .onChange(of: isEditing) {
-                    isEditing ? appState.showPanel() : appState.panel.orderOut(nil)
-                    SettingsStore.shared.appIconSize = appState.appIconSize
+                    Task {
+                        await appState.fetchRunningApps()
+                        isEditing && !SettingsStore.shared.previewWindows ? appState.showPanel() : appState.panel.orderOut(nil)
+                        SettingsStore.shared.appIconSize = appState.appIconSize
+                    }
                 }
             }
         }
