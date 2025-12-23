@@ -33,50 +33,6 @@ class AppState: ObservableObject {
     @Published var settings: SettingsOptions = SettingsOptions(isModifying: false, modifyingProperty: nil)
     @Published var panel: NSPanel!
     
-    func fetchWindows() async throws -> [WindowInfo] {
-        let content = try await SCShareableContent.excludingDesktopWindows(
-            false,
-            onScreenWindowsOnly: true
-        )
-        
-        var windowInfos: [WindowInfo] = []
-        
-        for window in content.windows {
-            // Skip windows without titles or very small windows
-            guard let title = window.title,
-                  !title.isEmpty,
-                  window.frame.width > 50,
-                  window.frame.height > 50 else {
-                continue
-            }
-            
-            let appName = window.owningApplication?.applicationName ?? "Unknown"
-            let preview = try? await captureWindow(window)
-            
-            windowInfos.append(WindowInfo(
-                winID: window.windowID,
-                title: title,
-                appName: appName,
-                preview: preview
-            ))
-        }
-        
-        return windowInfos
-    }
-
-    func captureWindow(_ window: SCWindow) async throws -> NSImage? {
-        let filter = SCContentFilter(desktopIndependentWindow: window)
-        let config = SCStreamConfiguration()
-        config.scalesToFit = true
-        
-        let image = try await SCScreenshotManager.captureImage(
-            contentFilter: filter,
-            configuration: config
-        )
-        
-        return NSImage(cgImage: image, size: NSSize(width: window.frame.width, height: window.frame.height))
-    }
-
     func fetchRunningApps() async {
         let allRunnableApps = NSWorkspace.shared.runningApplications
             .filter { $0.activationPolicy == .regular }
@@ -88,46 +44,78 @@ class AppState: ObservableObject {
             return
         }
         
-        var orderedPIDs = OrderedDictionary<CGWindowID, pid_t>()
+        let content = try? await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+        guard let windows = content?.windows else { return }
+        
+        var orderedWindows = OrderedDictionary<CGWindowID, pid_t>()
         for window in windowList {
             if let pid = window[kCGWindowOwnerPID as String] as? pid_t,
                let windowId = window[kCGWindowNumber as String] as? CGWindowID {
-                orderedPIDs[windowId] = pid
-                
+                orderedWindows[windowId] = pid
             }
         }
         
-        do {
-            let windows = try await fetchWindows()
-            for window in windows {
-                if window.appName == "Brave Browser" {
-                    print("Brave browser window ID is \(window.winID)")
-                    print("All window IDs \(orderedPIDs.keys)")
-                }
+        // Create apps immediately with placeholder icons
+        let sortedApps = orderedWindows.keys.compactMap { winID -> AppInfo? in
+            let pid = orderedWindows[winID]!
+            guard let app = appsByPID[pid],
+                  let window = windows.first(where: { $0.windowID == winID }),
+                  let title = window.title,
+                  !title.isEmpty,
+                  window.frame.width > 50,
+                  window.frame.height > 50,
+                  let name = app.localizedName,
+                  let id = app.bundleIdentifier else {
+                return nil
             }
-            
-            let sortedApps = orderedPIDs.keys.compactMap { winID -> AppInfo? in
-                let pid = orderedPIDs[winID]!
-                guard let app = appsByPID[pid],
-                      let window = windows.first(where: {$0.winID == winID}),
-                      let name = app.localizedName,
-                      let icon = window.preview,
-                      let id = app.bundleIdentifier else {
-                    return nil
-                }
-                appsByPID.removeValue(forKey: pid)
-                return AppInfo(id: id, winID: window.winID, name: name, icon: icon)
-            }
-            
-            await MainActor.run {
-                self.runningApps = sortedApps
-                if self.selectedAppId == nil {
-                    self.selectedAppId = self.runningApps.first?.id
-                }
-            }
-        } catch {
-            print("Error: \(error.localizedDescription)")
+            appsByPID.removeValue(forKey: pid)
+            return AppInfo(id: id, winID: window.windowID, name: name, icon: app.icon!)
         }
+        
+        await MainActor.run {
+            self.runningApps = sortedApps
+            if self.selectedAppId == nil {
+                self.selectedAppId = self.runningApps.first?.id
+            }
+        }
+        
+        // Get previews asynchronously in background
+        getWindowPreviews(sortedApps: sortedApps, windows: windows)
+    }
+    
+    func getWindowPreviews(sortedApps: [AppInfo], windows: [SCWindow]) {
+        for (index, appInfo) in sortedApps.enumerated() {
+            guard let window = windows.first(where: { $0.windowID == appInfo.winID }) else { continue }
+            
+            Task {
+                if let preview = try? await captureWindow(window) {
+                    await MainActor.run {
+                        if self.runningApps[index].winID == appInfo.winID {
+                            let title = window.title
+                            self.runningApps[index] = AppInfo(
+                                id: appInfo.id,
+                                winID: appInfo.winID,
+                                name: title!,
+                                icon: preview
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func captureWindow(_ window: SCWindow) async throws -> NSImage? {
+        let filter = SCContentFilter(desktopIndependentWindow: window)
+        let config = SCStreamConfiguration()
+        config.scalesToFit = true
+        
+        let image = try await SCScreenshotManager.captureImage(
+            contentFilter: filter,
+            configuration: config
+        )
+        
+        return NSImage(cgImage: image, size: NSSize(width: window.frame.width, height: window.frame.height))
     }
 
     func cycleSelection(reverse: Bool = false) {
