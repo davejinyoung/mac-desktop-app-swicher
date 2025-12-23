@@ -56,9 +56,7 @@ class AppState: ObservableObject {
         
         await MainActor.run {
             self.runningApps = sortedApps
-            if self.selectedAppId == nil {
-                self.selectedAppId = self.runningApps.first?.id
-            }
+            self.selectedAppId = self.runningApps.first?.id
         }
         
         // Get window previews asynchronously in non-main thread
