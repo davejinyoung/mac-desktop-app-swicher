@@ -11,10 +11,3 @@ struct desktop_app_switcherApp: App {
         }
     }
 }
-//struct MinimalWinPreviewApp: App {
-//    var body: some Scene {
-//        WindowGroup {
-//            WindowPreviewDemo()
-//        }
-//    }
-//}
