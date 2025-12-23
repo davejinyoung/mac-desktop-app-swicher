@@ -24,10 +24,10 @@ struct AppWindowPanelView: View {
                             
                             .overlay(alignment: .bottom) {
                                 Text(app.name)
-                                    .font(.system(size: 13, weight: .light, design: .default))
+                                    .font(.system(size: 13, weight: .regular, design: .default))
                                     .lineLimit(1)
                                     .foregroundColor(selectedAppId == app.id ? Color.white : Color.clear)
-                                    .offset(y: 18)
+                                    .offset(y: 19)
                             }
                     }
                     .onHover { hover in // The onHover now wraps the whole item
