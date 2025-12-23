@@ -14,6 +14,7 @@ This helps you stay focused on your current context and switch between relevant 
 
 ### Features
 - Displays all running apps on the current desktop as a floating panel
+- Option to display application window thumbnails
 - Replicates native app cycling behaviour
 - Ability to customize the shortcut binding to your preferred modifier+key combo
 - Ability to update the size of the panel
@@ -33,4 +34,17 @@ This helps you stay focused on your current context and switch between relevant 
 8. Allow prompted permissions requests in System Settings.
 9. Use Option+Tab to navigate between apps!
 
-<img width="736" height="214" alt="Screenshot 2025-09-29 at 10 33 21 PM" src="https://github.com/user-attachments/assets/8c841eac-078a-4c9f-af16-a8632b3b8353" />
+<br>
+<div align="center">
+  <img width="676" height="232" alt="Screenshot 2025-12-23 at 11 50 38 AM" src="https://github.com/user-attachments/assets/bcdc218c-5bb0-485c-a57b-d2f47a99848e" />
+  <br>
+  <em>Panel with app icon view</em>
+</div>
+
+<br>
+<div align="center">
+  <img width="1888" height="394" alt="Screenshot 2025-12-23 at 11 51 26 AM" src="https://github.com/user-attachments/assets/403dbdbe-43bc-4016-bfa0-38a68000965c" />
+  <br>
+  <em>Panel with window thumbnail view</em>
+</div>
+
