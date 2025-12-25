@@ -9,8 +9,16 @@ struct AppWindowPanelView: View {
         ZStack {
             HStack {
                 ForEach(appState.runningApps) { app in
+                    let title = app.window.title
+                    let caption = (title != "") ? "\(app.name) | \(title ?? "")" : app.name
                     VStack {
                         Image(nsImage: app.icon)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 40, height: 40)
+                            .clipShape(RoundedRectangle(cornerRadius: appState.appIconSize * 0.2, style: .continuous))
+                        
+                        Image(nsImage: app.thumbnail)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .background(
@@ -21,16 +29,15 @@ struct AppWindowPanelView: View {
                                     }
                                 }
                             )
-                            
                             .overlay(alignment: .bottom) {
-                                Text(app.name)
+                                Text(caption)
                                     .font(.system(size: 13, weight: .regular, design: .default))
                                     .lineLimit(1)
                                     .foregroundColor(selectedAppId == app.id ? Color.white : Color.clear)
                                     .offset(y: 19)
                             }
                     }
-                    .onHover { hover in // The onHover now wraps the whole item
+                    .onHover { hover in
                         if hover && appState.canHover {
                             appState.selectedAppId = app.id
                         }

@@ -9,6 +9,7 @@ struct AppInfo: Identifiable, Equatable {
     let window: SCWindow
     let name: String
     let icon: NSImage
+    let thumbnail: NSImage
 }
 
 struct SettingsOptions: Equatable {
@@ -91,7 +92,7 @@ class AppState: ObservableObject {
             if (SettingsStore.shared.previewWindows) {
                 preview = self.runningApps.first(where: {$0.window.windowID == winID})?.icon ?? preview
             }
-            return AppInfo(id: id, window: window, name: name, icon: preview!)
+            return AppInfo(id: id, window: window, name: name, icon: app.icon!, thumbnail: preview!)
         }
         return sortedApps
     }
@@ -102,12 +103,12 @@ class AppState: ObservableObject {
                 if let windowThumbnail = try? await captureWindow(app.window) {
                     await MainActor.run {
                         if self.runningApps[index].window.windowID == app.window.windowID {
-                            let title = app.window.title?.isEmpty == false ? app.window.title! : app.name
                             let appInfo = AppInfo(
                                 id: app.id,
                                 window: app.window,
-                                name: title,
-                                icon: windowThumbnail
+                                name: app.name,
+                                icon: app.icon,
+                                thumbnail: windowThumbnail
                             )
                             self.runningApps[index] = appInfo
                         }
