@@ -21,6 +21,7 @@ struct AppWindowPanelView: View {
                         Image(nsImage: app.thumbnail)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
+                            .frame(maxHeight: 250)
                             .background(
                                 Group {
                                     if selectedAppId == app.id {

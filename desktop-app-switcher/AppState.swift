@@ -121,6 +121,8 @@ class AppState: ObservableObject {
     func captureWindow(_ window: SCWindow) async throws -> NSImage? {
         let filter = SCContentFilter(desktopIndependentWindow: window)
         let config = SCStreamConfiguration()
+        config.width = Int(window.frame.width-40)
+        config.height = Int(window.frame.height)
         config.scalesToFit = true
         
         let image = try await SCScreenshotManager.captureImage(
