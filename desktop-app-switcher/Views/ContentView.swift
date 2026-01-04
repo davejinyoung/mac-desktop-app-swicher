@@ -6,7 +6,10 @@ struct ContentView: View {
     @State private var selectedAppId: String?
 
     var body: some View {
-        if SettingsStore.shared.previewWindows {
+        if appState.runningApps.isEmpty {
+            EmptyWindowsView()
+        }
+        else if SettingsStore.shared.previewWindows {
             AppWindowPanelView()
         } else {
             AppIconPanelView()
