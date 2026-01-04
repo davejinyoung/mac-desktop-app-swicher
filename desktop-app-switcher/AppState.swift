@@ -183,6 +183,7 @@ class AppState: ObservableObject {
     }
     
     func updateRunningAppsListOrder() {
+        if runningApps.isEmpty { return }
         let curIndex = runningApps.firstIndex(where: { $0.id == selectedAppId }) ?? 0
         let selectedApp = runningApps.remove(at: curIndex)
         self.selectedAppId = selectedApp.id
