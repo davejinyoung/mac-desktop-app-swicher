@@ -211,6 +211,8 @@ class AppState: ObservableObject {
             SettingsStore.shared.shortcutModifierRaw = modifier
         case "quit":
             SettingsStore.shared.quitAppKey = keyCode
+        case "close":
+            SettingsStore.shared.closeWindowKey = keyCode
         case "new":
             SettingsStore.shared.newAppWindowKey = keyCode
         default:

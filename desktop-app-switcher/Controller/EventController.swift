@@ -98,6 +98,8 @@ class EventController {
         switch keyCode {
         case SettingsStore.shared.quitAppKey:
             terminateSelectedApp()
+        case SettingsStore.shared.closeWindowKey:
+            closeWindowOfApp()
         case SettingsStore.shared.newAppWindowKey:
             openNewAppWindowInstance()
         case 124: // Checks for right arrow key
@@ -155,5 +157,38 @@ class EventController {
                  .bundleIdentifier == appState.selectedAppId })
         appToTerminate?.terminate()
         appState.cycleSelection()
+    }
+    
+    func closeWindowOfApp(windowIndex: Int = 0) {
+        let runningApps = NSWorkspace.shared.runningApplications
+        guard let pid = runningApps.first(where: { $0.bundleIdentifier == appState.selectedAppId })?.processIdentifier else {
+            return
+        }
+        let appElement = AXUIElementCreateApplication(pid)
+        var windowsRef: CFTypeRef?
+        let result = AXUIElementCopyAttributeValue(appElement, kAXWindowsAttribute as CFString, &windowsRef)
+        
+        guard result == .success,
+              let windows = windowsRef as? [AXUIElement],
+              windowIndex < windows.count else {
+            print("Could not get windows")
+            return
+        }
+        
+        // Close the frontmost visible window
+        for window in windows {
+            var closeButtonRef: CFTypeRef?
+            AXUIElementCopyAttributeValue(window, kAXCloseButtonAttribute as CFString, &closeButtonRef)
+            
+            if let closeButton = closeButtonRef as! AXUIElement? {
+                // Perform press action on close button
+                AXUIElementPerformAction(closeButton, kAXPressAction as CFString)
+                if let selectedAppId = appState.selectedAppId {
+                    appState.runningApps.removeAll { $0.id == selectedAppId }
+                }
+                appState.cycleSelection()
+                break
+            }
+        }
     }
 }

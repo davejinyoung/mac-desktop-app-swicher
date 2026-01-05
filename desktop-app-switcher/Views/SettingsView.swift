@@ -77,6 +77,18 @@ struct SettingsView: View {
             .environmentObject(appState)
             
             ShortcutSettingRow(
+                label: "Close Window Key:",
+                buttonLabel: "\(iconForKeyCode(settings.closeWindowKey))",
+                modifyingProperty: "close",
+                popoverMessage: "Choose any key to close the frontmost window of the currently selected app",
+                onButtonTap: {
+                    appState.settings.isModifying = true
+                    appState.settings.modifyingProperty = "close"
+                }
+            )
+            .environmentObject(appState)
+            
+            ShortcutSettingRow(
                 label: "New App Window Key:",
                 buttonLabel: "\(iconForKeyCode(settings.newAppWindowKey))",
                 modifyingProperty: "new",

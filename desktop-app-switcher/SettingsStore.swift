@@ -8,6 +8,7 @@ class SettingsStore: ObservableObject {
         static let shortcutModifierRaw = "shortcutModifierRaw"
         static let shortcutKey = "shortcutKey"
         static let quitAppKey = "quitAppKey"
+        static let closeWindowKey = "closeWindowKey"
         static let newAppWindowKey = "newAppWindowKey"
         static let appIconSize = "appIconSizeKey"
         static let appsFromAllDeskops = "appsFromAllDeskops"
@@ -31,6 +32,12 @@ class SettingsStore: ObservableObject {
     @Published var quitAppKey: Int {
         didSet {
             UserDefaults.standard.set(quitAppKey, forKey: Keys.quitAppKey)
+        }
+    }
+    
+    @Published var closeWindowKey: Int {
+        didSet {
+            UserDefaults.standard.set(closeWindowKey, forKey: Keys.closeWindowKey)
         }
     }
     
@@ -74,6 +81,7 @@ class SettingsStore: ObservableObject {
         self.shortcutModifierRaw = UserDefaults.standard.object(forKey: Keys.shortcutModifierRaw) as? Int ?? 524576 // Option modifier
         self.shortcutKey = UserDefaults.standard.object(forKey: Keys.shortcutKey) as? Int ?? 48 // Tab key
         self.quitAppKey = UserDefaults.standard.object(forKey: Keys.quitAppKey) as? Int ?? 12 // Q key
+        self.closeWindowKey = UserDefaults.standard.object(forKey: Keys.closeWindowKey) as? Int ?? 13 // W key
         self.newAppWindowKey = UserDefaults.standard.object(forKey: Keys.newAppWindowKey) as? Int ?? 45 // N key
         self.appsFromAllDeskops = UserDefaults.standard.object(forKey: Keys.appsFromAllDeskops) as? Bool ?? false
         self.continuousCycling = UserDefaults.standard.object(forKey: Keys.continuousCycling) as? Bool ?? false
