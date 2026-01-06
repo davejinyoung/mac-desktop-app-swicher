@@ -88,10 +88,7 @@ class AppState: ObservableObject {
             // Choose the first window instance of the app and ignore the rest
             if apps.contains(pid) { return nil }
             apps.append(pid)
-            var preview = runningApps.first(where: {$0.id == id})?.thumbnail ?? app.icon
-            if (SettingsStore.shared.previewWindows) {
-                preview = self.runningApps.first(where: {$0.window.windowID == winID})?.icon ?? preview
-            }
+            let preview = runningApps.first(where: {$0.id == id})?.thumbnail ?? app.icon
             return AppInfo(id: id, window: window, name: name, icon: app.icon!, thumbnail: preview!)
         }
         return sortedApps
