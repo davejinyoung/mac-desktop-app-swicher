@@ -87,8 +87,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 appState.canHover = false
             }
             self.appState.panel.orderOut(nil)
-            self.appState.switchSelectedAppToForeground()
-            self.appState.updateRunningAppsListOrder()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                self.appState.switchSelectedAppToForeground()
+                self.appState.updateRunningAppsListOrder()
+            }
             return true
         }
         return false
