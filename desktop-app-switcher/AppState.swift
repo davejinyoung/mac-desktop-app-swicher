@@ -115,19 +115,40 @@ class AppState: ObservableObject {
         }
     }
     
+    func isFullscreen(pid: pid_t) -> Bool {
+        let appElement = AXUIElementCreateApplication(pid)
+        var focusedWindow: AnyObject?
+        let result = AXUIElementCopyAttributeValue(appElement, kAXFocusedWindowAttribute as CFString, &focusedWindow)
+        
+        guard result == .success, let windowElement = focusedWindow as! AXUIElement? else {
+            return false
+        }
+        
+        var isFullscreen: AnyObject?
+        let fsResult = AXUIElementCopyAttributeValue(windowElement, "AXFullScreen" as CFString, &isFullscreen)
+        
+        if fsResult == .success, let boolValue = isFullscreen as? Bool {
+            return boolValue
+        }
+        
+        return false
+    }
+
     func captureWindow(_ window: SCWindow) async throws -> NSImage? {
         let filter = SCContentFilter(desktopIndependentWindow: window)
         let config = SCStreamConfiguration()
-        config.width = Int(window.frame.width-40)
-        config.height = Int(window.frame.height)
+        let isFullscreen = isFullscreen(pid: window.owningApplication!.processID)
+        config.width = !isFullscreen ? Int(window.frame.width-40) : Int(NSScreen.screens.first!.frame.width)
+        config.height = !isFullscreen ? Int(window.frame.height) : Int(NSScreen.screens.first!.frame.height)
         config.scalesToFit = true
+        config.showsCursor = false
         
         let image = try await SCScreenshotManager.captureImage(
             contentFilter: filter,
             configuration: config
         )
         
-        return NSImage(cgImage: image, size: NSSize(width: window.frame.width, height: window.frame.height))
+        return NSImage(cgImage: image, size: NSSize(width: config.width, height: config.height))
     }
 
     func cycleSelection(reverse: Bool = false) {
