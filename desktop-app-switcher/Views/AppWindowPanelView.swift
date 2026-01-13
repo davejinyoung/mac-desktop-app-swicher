@@ -23,6 +23,7 @@ struct AppWindowPanelView: View {
                             .aspectRatio(contentMode: .fit)
                             .clipped()
                             .frame(maxHeight: 200)
+                            .padding(8)
                             .background(
                                 Group {
                                     if selectedAppId == app.id {
