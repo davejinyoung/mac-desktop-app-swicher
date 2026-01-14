@@ -138,14 +138,22 @@ class EventController {
     }
     
     private func openNewAppWindowInstance() {
-        let appToOpenNewWindown = NSWorkspace
-             .shared.runningApplications.first(where: { $0
-                 .bundleIdentifier == appState.selectedAppId })
-        let url = appToOpenNewWindown!.bundleURL
-        let configuration = NSWorkspace.OpenConfiguration()
-        configuration.activates = true
-        configuration.createsNewApplicationInstance = true
-        NSWorkspace.shared.openApplication(at: url!, configuration: configuration, completionHandler: nil)
+        guard let appToOpenNewWindow = NSWorkspace.shared.runningApplications.first(where: {
+            $0.bundleIdentifier == appState.selectedAppId
+        }) else { return }
+        
+        appToOpenNewWindow.activate()
+        
+        // Simulate Cmd+N
+        let source = CGEventSource(stateID: .hidSystemState)
+        let keyCode: CGKeyCode = 0x2D
+        
+        let keyDown = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: true)
+        keyDown?.flags = .maskCommand
+        keyDown?.post(tap: .cghidEventTap)
+        
+        let keyUp = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: false)
+        keyUp?.post(tap: .cghidEventTap)
     }
     
     private func terminateSelectedApp() {
