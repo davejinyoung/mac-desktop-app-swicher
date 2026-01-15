@@ -194,6 +194,11 @@ class EventController {
                 if let selectedAppId = appState.selectedAppId {
                     appState.runningApps.removeAll { $0.id == selectedAppId }
                 }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                    Task {
+                        await self.appState.fetchRunningApps()
+                    }
+                }
                 appState.cycleSelection()
                 break
             }
