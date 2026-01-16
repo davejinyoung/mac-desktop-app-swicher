@@ -129,6 +129,13 @@ struct SettingsView: View {
             }
             
             HStack {
+                Text("Show All Windows of Each App")
+                Spacer()
+                Toggle(isOn: $settings.showAllWindows) {}
+                .toggleStyle(.switch)
+            }
+            
+            HStack {
                 Text("Panel Size:")
                 Spacer()
                 Slider(

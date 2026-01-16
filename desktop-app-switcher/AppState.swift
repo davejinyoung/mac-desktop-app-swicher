@@ -81,15 +81,15 @@ class AppState: ObservableObject {
                   window.frame.width > 50,
                   window.frame.height > 50,
                   window.windowLayer == 0,
-                  let name = app.localizedName,
-                  let id = app.bundleIdentifier else {
+                  let name = app.localizedName
+            else {
                 return nil
             }
             // Choose the first window instance of the app and ignore the rest
-            if apps.contains(pid) { return nil }
+            if apps.contains(pid) && !SettingsStore.shared.showAllWindows { return nil }
             apps.append(pid)
-            let preview = runningApps.first(where: {$0.id == id})?.thumbnail ?? app.icon
-            return AppInfo(id: id, window: window, name: name, icon: app.icon!, thumbnail: preview!)
+            let preview = runningApps.first(where: {$0.window.windowID == window.windowID})?.thumbnail ?? app.icon
+            return AppInfo(id: "\(window.windowID)", window: window, name: name, icon: app.icon!, thumbnail: preview!)
         }
         return sortedApps
     }
@@ -166,7 +166,6 @@ class AppState: ObservableObject {
 
     @MainActor
     private func performCycle(reverse: Bool) {
-        print("running apps are: " + runningApps.map(\.name).joined(separator: ", "))
         guard !runningApps.isEmpty else {
             return
         }
@@ -186,10 +185,17 @@ class AppState: ObservableObject {
     }
     
     func switchSelectedAppToForeground() {
-        let appToActivate = NSWorkspace
-             .shared.runningApplications.first(where: { $0
-                 .bundleIdentifier == selectedAppId })
-        appToActivate?.activate(options: [.activateAllWindows])
+        guard let pid = getPidofSelectedApp() else { return }
+        
+        let app = NSRunningApplication(processIdentifier: pid)
+        app?.activate()
+    }
+    
+    func getPidofSelectedApp() -> pid_t? {
+        guard let pid = runningApps.first(where: {$0.id == selectedAppId})?.window.owningApplication?.processID else {
+            return nil
+        }
+        return pid
     }
     
     func isLastApp() -> Bool {

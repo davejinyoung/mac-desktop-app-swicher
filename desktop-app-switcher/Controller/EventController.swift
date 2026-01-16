@@ -138,11 +138,10 @@ class EventController {
     }
     
     private func openNewAppWindowInstance() {
-        guard let appToOpenNewWindow = NSWorkspace.shared.runningApplications.first(where: {
-            $0.bundleIdentifier == appState.selectedAppId
-        }) else { return }
-        
-        appToOpenNewWindow.activate()
+        if let pid = appState.getPidofSelectedApp(),
+           let appToActivate = NSRunningApplication(processIdentifier: pid) {
+            appToActivate.activate()
+        }
         
         // Simulate Cmd+N
         let source = CGEventSource(stateID: .hidSystemState)
@@ -157,19 +156,19 @@ class EventController {
     }
     
     private func terminateSelectedApp() {
-        if let selectedAppId = appState.selectedAppId {
-            appState.runningApps.removeAll { $0.id == selectedAppId }
+        if let pid = appState.getPidofSelectedApp(),
+           let appToTerminate = NSRunningApplication(processIdentifier: pid) {
+            appToTerminate.terminate()
         }
-        let appToTerminate = NSWorkspace
-             .shared.runningApplications.first(where: { $0
-                 .bundleIdentifier == appState.selectedAppId })
-        appToTerminate?.terminate()
-        appState.cycleSelection()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            Task {
+                await self.appState.fetchRunningApps()
+            }
+        }
     }
     
     func closeWindowOfApp(windowIndex: Int = 0) {
-        let runningApps = NSWorkspace.shared.runningApplications
-        guard let pid = runningApps.first(where: { $0.bundleIdentifier == appState.selectedAppId })?.processIdentifier else {
+        guard let pid = appState.getPidofSelectedApp() else {
             return
         }
         let appElement = AXUIElementCreateApplication(pid)
