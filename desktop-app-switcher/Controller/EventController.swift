@@ -153,6 +153,12 @@ class EventController {
         
         let keyUp = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: false)
         keyUp?.post(tap: .cghidEventTap)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            Task {
+                await self.appState.fetchRunningApps()
+            }
+        }
     }
     
     private func terminateSelectedApp() {
