@@ -168,9 +168,9 @@ class EventController {
     }
     
     func closeWindowOfApp(windowIndex: Int = 0) {
-        guard let pid = appState.getPidofSelectedApp() else {
-            return
-        }
+        guard let pid = appState.getPidofSelectedApp(),
+              let windowId = UInt32(appState.selectedAppId!) else { return }
+        
         let appElement = AXUIElementCreateApplication(pid)
         var windowsRef: CFTypeRef?
         let result = AXUIElementCopyAttributeValue(appElement, kAXWindowsAttribute as CFString, &windowsRef)
@@ -182,13 +182,13 @@ class EventController {
             return
         }
         
-        // Close the frontmost visible window
         for window in windows {
             var closeButtonRef: CFTypeRef?
+            var wid: CGWindowID = 0
             AXUIElementCopyAttributeValue(window, kAXCloseButtonAttribute as CFString, &closeButtonRef)
             
-            if let closeButton = closeButtonRef as! AXUIElement? {
-                // Perform press action on close button
+            if let closeButton = closeButtonRef as! AXUIElement?,
+                _AXUIElementGetWindow(window, &wid) == .success && wid == windowId {
                 AXUIElementPerformAction(closeButton, kAXPressAction as CFString)
                 if let selectedAppId = appState.selectedAppId {
                     appState.runningApps.removeAll { $0.id == selectedAppId }

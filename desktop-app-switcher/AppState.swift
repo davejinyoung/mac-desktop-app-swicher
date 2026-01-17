@@ -186,7 +186,7 @@ class AppState: ObservableObject {
     
     func switchSelectedAppToForeground() {
         guard let pid = getPidofSelectedApp(),
-                let windowId = UInt32(selectedAppId!) else { return }
+              let windowId = UInt32(selectedAppId!) else { return }
         
         DispatchQueue.global(qos: .userInitiated).async {
             if let app = NSRunningApplication(processIdentifier: pid) {
