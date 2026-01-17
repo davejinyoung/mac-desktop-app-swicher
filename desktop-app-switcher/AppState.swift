@@ -81,6 +81,8 @@ class AppState: ObservableObject {
                   window.frame.width > 50,
                   window.frame.height > 50,
                   window.windowLayer == 0,
+                  window.title != nil,
+                  let title = window.title, !title.isEmpty,
                   let name = app.localizedName
             else {
                 return nil
