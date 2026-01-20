@@ -29,7 +29,7 @@ class AppState: ObservableObject {
     
     func fetchRunningApps() async {
         let allRunnableApps = NSWorkspace.shared.runningApplications
-            .filter { $0.activationPolicy == .regular }
+            .filter { $0.activationPolicy == .regular || $0.activationPolicy == .accessory }
         let appsByPID = Dictionary(uniqueKeysWithValues: allRunnableApps.map { ($0.processIdentifier, $0) })
         
         let option: CGWindowListOption = SettingsStore.shared.appsFromAllDeskops ? .excludeDesktopElements : .optionOnScreenOnly
