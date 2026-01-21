@@ -32,7 +32,7 @@ class AppState: ObservableObject {
             .filter { $0.activationPolicy == .regular || $0.activationPolicy == .accessory }
         let appsByPID = Dictionary(uniqueKeysWithValues: allRunnableApps.map { ($0.processIdentifier, $0) })
         
-        let option: CGWindowListOption = SettingsStore.shared.appsFromAllDeskops ? [.excludeDesktopElements, .optionOnScreenOnly] : .optionOnScreenOnly
+        let option: CGWindowListOption = SettingsStore.shared.appsFromAllDeskops ? [.excludeDesktopElements] : [.excludeDesktopElements, .optionOnScreenOnly]
         guard let windowList = CGWindowListCopyWindowInfo(option, kCGNullWindowID) as? [[String: Any]] else {
             return
         }
@@ -45,7 +45,7 @@ class AppState: ObservableObject {
             }
         }
         
-        let content = try? await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+        let content = try? await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: false)
         guard let allUnorderedWindows = content?.windows else { return }
         
         // Create apps immediately with placeholder icons
@@ -77,7 +77,6 @@ class AppState: ObservableObject {
             let pid = orderedWindows[winID]!
             guard let app = appsByPID[pid],
                   let window = allUnorderedWindows.first(where: { $0.windowID == winID }),
-                  window.isOnScreen,
                   window.frame.width > 50,
                   window.frame.height > 50,
                   window.windowLayer == 0,
