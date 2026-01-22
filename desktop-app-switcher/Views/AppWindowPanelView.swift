@@ -46,6 +46,12 @@ struct AppWindowPanelView: View {
                         }
                     }
                 }
+                Button(action: {
+                    appState.openChrome()
+                }) {
+                    Text("Open Chrome")
+                        .frame(width: 100, height: 100)
+                }
             }
             .padding(25)
             .glassEffect(.clear, in: .rect(cornerRadius: 15))

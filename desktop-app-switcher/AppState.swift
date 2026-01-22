@@ -28,6 +28,18 @@ class AppState: ObservableObject {
     @Published var panel: NSPanel!
     @Published var appsFetchTask: Task<Void, Never>?
     
+    func openChrome() {
+        let chromeURL = "/Applications/Google Chrome.app"
+        let chromeBundleID = "com.google.Chrome"
+        for app in NSWorkspace.shared.runningApplications {
+            if app.bundleIdentifier == chromeBundleID {
+                return
+            }
+        }
+        NSWorkspace.shared.open(URL(fileURLWithPath: chromeURL))
+        panel.orderOut(nil)
+    }
+    
     func fetchRunningApps() async {
         let allRunnableApps = NSWorkspace.shared.runningApplications
             .filter { $0.activationPolicy == .regular || $0.activationPolicy == .accessory }
