@@ -189,23 +189,21 @@ class AppState: ObservableObject {
         guard let pid = getPidofSelectedApp(),
               let windowId = UInt32(selectedAppId!) else { return }
         
-        DispatchQueue.global(qos: .userInitiated).async {
-            if let app = NSRunningApplication(processIdentifier: pid) {
-                app.activate()
-            }
-            
-            let appElement = AXUIElementCreateApplication(pid)
-            
-            var windowsRef: CFTypeRef?
-            guard AXUIElementCopyAttributeValue(appElement, kAXWindowsAttribute as CFString, &windowsRef) == .success,
-                  let windows = windowsRef as? [AXUIElement] else { return }
-            
-            for windowElement in windows {
-                var wid: CGWindowID = 0
-                if _AXUIElementGetWindow(windowElement, &wid) == .success && wid == windowId {
-                    AXUIElementPerformAction(windowElement, kAXRaiseAction as CFString)
-                    break
-                }
+        if let app = NSRunningApplication(processIdentifier: pid) {
+            app.activate()
+        }
+        
+        let appElement = AXUIElementCreateApplication(pid)
+        
+        var windowsRef: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(appElement, kAXWindowsAttribute as CFString, &windowsRef) == .success,
+              let windows = windowsRef as? [AXUIElement] else { return }
+        
+        for windowElement in windows {
+            var wid: CGWindowID = 0
+            if _AXUIElementGetWindow(windowElement, &wid) == .success && wid == windowId {
+                AXUIElementPerformAction(windowElement, kAXRaiseAction as CFString)
+                break
             }
         }
     }
