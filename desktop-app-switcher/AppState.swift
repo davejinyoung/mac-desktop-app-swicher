@@ -190,7 +190,7 @@ class AppState: ObservableObject {
               let windowId = UInt32(selectedAppId!) else { return }
         
         if let app = NSRunningApplication(processIdentifier: pid) {
-            app.activate()
+            app.activate(options: [.activateIgnoringOtherApps])
         }
         
         let appElement = AXUIElementCreateApplication(pid)
