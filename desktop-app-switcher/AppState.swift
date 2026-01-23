@@ -26,6 +26,7 @@ class AppState: ObservableObject {
     @Published var canHover: Bool = false
     @Published var settings: SettingsOptions = SettingsOptions(isModifying: false, modifyingProperty: nil)
     @Published var panel: NSPanel!
+    @Published var appsFetchTask: Task<Void, Never>?
     
     func fetchRunningApps() async {
         let allRunnableApps = NSWorkspace.shared.runningApplications
@@ -154,7 +155,7 @@ class AppState: ObservableObject {
 
     func cycleSelection(reverse: Bool = false) {
         if !panel.isVisible {
-            Task {
+            appsFetchTask = Task {
                 await fetchRunningApps()
                 await performCycle(reverse: reverse)
             }
@@ -262,3 +263,4 @@ class AppState: ObservableObject {
         settings.isModifying = false
     }
 }
+

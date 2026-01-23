@@ -5,6 +5,7 @@ import Carbon
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     private let appState = AppState()
+    private var appChangeMonitor: Any?
     private var globalFlagsMonitor: Any?
     private var localFlagsMonitor: Any?
     private var globalMouseMonitor: Any?
@@ -87,7 +88,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 appState.canHover = false
             }
             self.appState.panel.orderOut(nil)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            Task { @MainActor in
+                await self.appState.appsFetchTask?.value
                 self.appState.switchSelectedAppToForeground()
                 self.appState.updateRunningAppsListOrder()
             }
