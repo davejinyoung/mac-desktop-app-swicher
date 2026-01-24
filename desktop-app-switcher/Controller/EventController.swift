@@ -154,6 +154,8 @@ class EventController {
         let keyUp = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: false)
         keyUp?.post(tap: .cghidEventTap)
         
+        // We can't really wait for a specific window event before grabbing the thumbnail,
+        // current option is to just simply delay it
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
             Task {
                 await self.appState.fetchRunningApps()
@@ -161,15 +163,17 @@ class EventController {
         }
     }
     
+    private func removeAllWindowsOfSelectedApp(appToTerminate: NSRunningApplication) {
+        guard let bundleID = appToTerminate.bundleIdentifier else { return }
+        appState.runningApps.removeAll(where: { $0.window.owningApplication?.bundleIdentifier == bundleID })
+    }
+    
     private func terminateSelectedApp() {
-        if let pid = appState.getPidofSelectedApp(),
+        if let pid = self.appState.getPidofSelectedApp(),
            let appToTerminate = NSRunningApplication(processIdentifier: pid) {
             appToTerminate.terminate()
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            Task {
-                await self.appState.fetchRunningApps()
-            }
+            self.removeAllWindowsOfSelectedApp(appToTerminate: appToTerminate)
+            appState.cycleSelection()
         }
     }
     
