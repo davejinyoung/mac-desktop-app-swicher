@@ -15,6 +15,7 @@ class SettingsStore: ObservableObject {
         static let continuousCycling = "continuousCycling"
         static let previewWindows = "previewWindows"
         static let showAllWindows = "showAllWindows"
+        static let activateAllWindows = "activateAllWindows"
         static let switchWindowsWhileCycling = "switchWindowsWhileCycling"
     }
     
@@ -78,6 +79,12 @@ class SettingsStore: ObservableObject {
         }
     }
     
+    @Published var activateAllWindows: Bool {
+        didSet {
+            UserDefaults.standard.set(activateAllWindows, forKey: Keys.activateAllWindows)
+        }
+    }
+    
     @Published var appIconSize: CGFloat {
         didSet {
             UserDefaults.standard.set(appIconSize, forKey: Keys.appIconSize)
@@ -95,6 +102,7 @@ class SettingsStore: ObservableObject {
         self.previewWindows = UserDefaults.standard.object(forKey: Keys.previewWindows) as? Bool ?? false
         self.switchWindowsWhileCycling = UserDefaults.standard.object(forKey: Keys.switchWindowsWhileCycling) as? Bool ?? false
         self.showAllWindows = UserDefaults.standard.object(forKey: Keys.showAllWindows) as? Bool ?? false
+        self.activateAllWindows = UserDefaults.standard.object(forKey: Keys.activateAllWindows) as? Bool ?? false
         self.appIconSize = UserDefaults.standard.object(forKey: Keys.appIconSize) as? CGFloat ?? 120
     }
 }
