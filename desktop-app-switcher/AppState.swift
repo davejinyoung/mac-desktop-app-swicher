@@ -236,6 +236,8 @@ class AppState: ObservableObject {
     func showPanel() {
         if let screen = NSScreen.main {
             let screenRect = screen.visibleFrame
+            screenWidth = screen.visibleFrame.width
+            screenHeight = screen.visibleFrame.height
             let newSize = CGSize(width: screenWidth, height: screenHeight)
             panel.setContentSize(newSize)
 
