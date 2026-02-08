@@ -11,7 +11,6 @@ class SettingsStore: ObservableObject {
         static let closeWindowKey = "closeWindowKey"
         static let newAppWindowKey = "newAppWindowKey"
         static let appIconSize = "appIconSizeKey"
-        static let appsFromAllDeskops = "appsFromAllDeskops"
         static let continuousCycling = "continuousCycling"
         static let previewWindows = "previewWindows"
         static let showAllWindows = "showAllWindows"
@@ -46,12 +45,6 @@ class SettingsStore: ObservableObject {
     @Published var newAppWindowKey: Int {
         didSet {
             UserDefaults.standard.set(newAppWindowKey, forKey: Keys.newAppWindowKey)
-        }
-    }
-    
-    @Published var appsFromAllDeskops: Bool {
-        didSet {
-            UserDefaults.standard.set(appsFromAllDeskops, forKey: Keys.appsFromAllDeskops)
         }
     }
     
@@ -97,7 +90,6 @@ class SettingsStore: ObservableObject {
         self.quitAppKey = UserDefaults.standard.object(forKey: Keys.quitAppKey) as? Int ?? 12 // Q key
         self.closeWindowKey = UserDefaults.standard.object(forKey: Keys.closeWindowKey) as? Int ?? 13 // W key
         self.newAppWindowKey = UserDefaults.standard.object(forKey: Keys.newAppWindowKey) as? Int ?? 45 // N key
-        self.appsFromAllDeskops = UserDefaults.standard.object(forKey: Keys.appsFromAllDeskops) as? Bool ?? false
         self.continuousCycling = UserDefaults.standard.object(forKey: Keys.continuousCycling) as? Bool ?? false
         self.previewWindows = UserDefaults.standard.object(forKey: Keys.previewWindows) as? Bool ?? false
         self.switchWindowsWhileCycling = UserDefaults.standard.object(forKey: Keys.switchWindowsWhileCycling) as? Bool ?? false

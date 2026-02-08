@@ -33,7 +33,7 @@ class AppState: ObservableObject {
             .filter { $0.activationPolicy == .regular || $0.activationPolicy == .accessory }
         let appsByPID = Dictionary(uniqueKeysWithValues: allRunnableApps.map { ($0.processIdentifier, $0) })
         
-        let option: CGWindowListOption = SettingsStore.shared.appsFromAllDeskops ? [.excludeDesktopElements] : [.excludeDesktopElements, .optionOnScreenOnly]
+        let option: CGWindowListOption = [.excludeDesktopElements, .optionOnScreenOnly]
         guard let windowList = CGWindowListCopyWindowInfo(option, kCGNullWindowID) as? [[String: Any]] else {
             return
         }

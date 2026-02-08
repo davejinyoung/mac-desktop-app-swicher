@@ -101,13 +101,6 @@ struct SettingsView: View {
             .environmentObject(appState)
             
             HStack {
-                Text("Show Apps from All Desktops")
-                Spacer()
-                Toggle(isOn: $settings.appsFromAllDeskops) {}
-                .toggleStyle(.switch)
-            }
-            
-            HStack {
                 Text("Allow Continuous App Cycling")
                 Spacer()
                 Toggle(isOn: $settings.continuousCycling) {}
