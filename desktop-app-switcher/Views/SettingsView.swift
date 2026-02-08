@@ -108,28 +108,28 @@ struct SettingsView: View {
             }
             
             HStack {
-                Text("Switch Windows when Cycling Apps")
+                Text("Activate Windows when Cycling through Panel")
                 Spacer()
                 Toggle(isOn: $settings.switchWindowsWhileCycling) {}
                 .toggleStyle(.switch)
             }
             
             HStack {
-                Text("Preview Windows on Panel")
+                Text("Preview Windows on Panel on Panel")
                 Spacer()
                 Toggle(isOn: $settings.previewWindows) {}
                 .toggleStyle(.switch)
             }
             
             HStack {
-                Text("Show All Windows of Each App")
+                Text("Show All Windows of Each App on Panel")
                 Spacer()
                 Toggle(isOn: $settings.showAllWindows) {}
                 .toggleStyle(.switch)
             }
             
             HStack {
-                Text("Activate All Windows of Each App")
+                Text("Activate All Windows of Each App to Front")
                 Spacer()
                 Toggle(isOn: $settings.activateAllWindows) {}
                 .toggleStyle(.switch)
@@ -155,7 +155,7 @@ struct SettingsView: View {
             }
         }
         .padding(32)
-        .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .frame(minWidth: 420, maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 }
 
