@@ -1,3 +1,5 @@
+<img width="256" height="256" alt="logo" src="https://github.com/user-attachments/assets/989effc8-9e5d-441f-93e0-be8e487d6cb2" />
+
 # MacOS Desktop App Switcher
 
 This is a macOS application that provides a fast and visual application switcher, triggered by a global hotkey. 
@@ -21,7 +23,6 @@ This helps you stay focused on your current context and switch between relevant 
 - Ability to quit a running app by clicking a customizable key on the currently selected app on the panel
 - Ability to close a window instance of a running app by clicking a customizable key on the currently selected app on the panel
 - Ability to open a new window of a running app by clicking a customizable key on the currently selected app on the panel
-- Can choose to display only the applications on the current desktop/space or all applications
 - Ability to determine whether holding the app switcher shortcut continuously cycles through apps or stops at the last/first app, depending on user settings.
 
 ### Usage
