@@ -26,9 +26,16 @@ struct AppWindowPanelView: View {
                             .padding(8)
                             .background(
                                 Group {
-                                    if selectedAppId == app.id {
-                                        RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                            .fill(Color.gray.opacity(0.7))
+                                    if SettingsStore.shared.showAllWindows && SettingsStore.shared.activateAllWindows {
+                                        if appState.getPidofSelectedApp() == app.pid {
+                                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                                .fill(Color.gray.opacity(0.7))
+                                        }
+                                    } else {
+                                        if selectedAppId == app.id {
+                                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                                .fill(Color.gray.opacity(0.7))
+                                        }
                                     }
                                 }
                             )

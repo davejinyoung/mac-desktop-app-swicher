@@ -6,6 +6,7 @@ import CoreGraphics
 
 struct AppInfo: Identifiable, Equatable {
     let id: String
+    let pid: pid_t
     let window: SCWindow
     let name: String
     let icon: NSImage
@@ -91,7 +92,7 @@ class AppState: ObservableObject {
             if apps.contains(pid) && !SettingsStore.shared.showAllWindows { return nil }
             apps.append(pid)
             let preview = runningApps.first(where: {$0.window.windowID == window.windowID})?.thumbnail ?? app.icon
-            return AppInfo(id: "\(window.windowID)", window: window, name: name, icon: app.icon!, thumbnail: preview!)
+            return AppInfo(id: "\(window.windowID)", pid: pid, window: window, name: name, icon: app.icon!, thumbnail: preview!)
         }
         return sortedApps
     }
@@ -104,6 +105,7 @@ class AppState: ObservableObject {
                         if self.runningApps[index].window.windowID == app.window.windowID {
                             let appInfo = AppInfo(
                                 id: app.id,
+                                pid: app.window.owningApplication!.processID,
                                 window: app.window,
                                 name: app.name,
                                 icon: app.icon,
