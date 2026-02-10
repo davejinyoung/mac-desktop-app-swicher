@@ -20,6 +20,8 @@ struct SettingsOptions: Equatable {
 
 class AppState: ObservableObject {
     @Published var runningApps: [AppInfo] = []
+    @Published var nonAnnexedRunningApps: [AppInfo] = []
+    @Published var annexedRunningApps: [AppInfo] = []
     @Published var selectedAppId: String?
     @Published var appIconSize: CGFloat = SettingsStore.shared.appIconSize
     @Published var screenWidth: CGFloat = 0
@@ -51,20 +53,22 @@ class AppState: ObservableObject {
         guard let allUnorderedWindows = content?.windows else { return }
         
         // Create apps immediately with placeholder icons
-        let sortedApps = matchAppsWithWindows(
+        let (nonAnnexedApps, annexedApps) = matchAppsWithWindows(
             appsByPID: appsByPID,
             orderedWindows: orderedWindows,
             allUnorderedWindows: allUnorderedWindows
         )
         
         await MainActor.run {
-            self.runningApps = sortedApps
+            self.nonAnnexedRunningApps = nonAnnexedApps
+            self.annexedRunningApps = annexedApps
+            self.runningApps = nonAnnexedApps + annexedApps
             self.selectedAppId = self.runningApps.first?.id
         }
         
         // Get window previews asynchronously in non-main thread
         if (SettingsStore.shared.previewWindows) {
-            getWindowThumbnails(sortedApps: sortedApps)
+            getWindowThumbnails(apps: self.runningApps)
         }
     }
     
@@ -73,7 +77,7 @@ class AppState: ObservableObject {
         appsByPID: [pid_t : NSRunningApplication],
         orderedWindows: OrderedDictionary<CGWindowID, pid_t>,
         allUnorderedWindows: [SCWindow]
-    ) -> [AppInfo] {
+    ) -> ([AppInfo], [AppInfo]) {
         var apps: [pid_t] = []
         let sortedApps = orderedWindows.keys.compactMap { winID -> AppInfo? in
             let pid = orderedWindows[winID]!
@@ -94,11 +98,13 @@ class AppState: ObservableObject {
             let preview = runningApps.first(where: {$0.window.windowID == window.windowID})?.thumbnail ?? app.icon
             return AppInfo(id: "\(window.windowID)", pid: pid, window: window, name: name, icon: app.icon!, thumbnail: preview!)
         }
-        return sortedApps
+        let braveApps = sortedApps.filter { $0.name == "Brave Browser" }
+        let otherApps = sortedApps.filter { $0.name != "Brave Browser" }
+        return (otherApps, braveApps)
     }
     
-    func getWindowThumbnails(sortedApps: [AppInfo]) {
-        for (index, app) in sortedApps.enumerated() {
+    func getWindowThumbnails(apps: [AppInfo]) {
+        for (index, app) in apps.enumerated() {
             Task {
                 if let windowThumbnail = try? await captureWindow(app.window) {
                     await MainActor.run {
@@ -174,13 +180,13 @@ class AppState: ObservableObject {
             return
         }
         
-        if let curIndex = runningApps.firstIndex(where: { $0.id == selectedAppId }) {
+        if let curIndex = nonAnnexedRunningApps.firstIndex(where: { $0.id == selectedAppId }) {
             let indexOffset = reverse ? -1 : 1
-            var nextIndex = (curIndex + indexOffset) % runningApps.count
-            nextIndex = (nextIndex % runningApps.count + runningApps.count) % runningApps.count
-            self.selectedAppId = runningApps[nextIndex].id
+            var nextIndex = (curIndex + indexOffset) % nonAnnexedRunningApps.count
+            nextIndex = (nextIndex % nonAnnexedRunningApps.count + nonAnnexedRunningApps.count) % nonAnnexedRunningApps.count
+            self.selectedAppId = nonAnnexedRunningApps[nextIndex].id
         } else {
-            self.selectedAppId = runningApps.first?.id
+            self.selectedAppId = nonAnnexedRunningApps.first?.id
         }
         
         if SettingsStore.shared.switchWindowsWhileCycling {
